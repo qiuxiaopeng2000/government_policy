@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 from libs.mysql_util import insert_or_update, select_data
 from libs.spyder_util import get_html, parse_page, browserdriver, edgedriver
 
-sql_select = "select * from gov_url where belong_to = '安徽' and name = '芜湖市'"
+sql_select = "select url from gov_url where belong_to = '安徽' and name = '芜湖市'"
 gov_url = select_data(sql_select)
 url = gov_url[0][0]
 print(url)
@@ -22,19 +22,43 @@ print(href)
 wd.get(href)
 
 all_policy = []
-next_btn = wd.find_element(By.XPATH, '/html/body/div[1]/div[2]/div[2]/div/div[2]/div[3]/div[2]/a[5]')
+next_btn = wd.find_element(By.XPATH, '//*[@id="page_public_info_type_xzfgk_tab_0_0"]/a[text()="下一页"]')
+
 num = 0
+
+select_sql = "select create_time from policy_url where belong_to='芜湖市' order by create_time desc limit 1"
+last_create_time = select_data(select_sql)
+# print(last_create_time)
+
 while next_btn.get_attribute('class') != 'disabled' and num < 3:
     # print(num)
     page_html = wd.page_source
     page_html.encode('utf-8')
     page = parse_page(page_html)
-    policy = page.xpath('/html/body/div[1]/div[2]/div[2]/div/div[2]/div[3]/div[1]/ul/li')
+    # 只爬取最新发布的政策
+    policy_times = page.xpath('//*[@id="tab_0_0"]/table/tbody/tr/td[2]/p/span[2]/text()')
+    index = 0
+    flag = False
+    if last_create_time is not None:
+        last_create_time = last_create_time[0][0]
+        for i in range(0, len(policy_times)):
+            times = policy_times[i][6:]
+            if str(times) <= last_create_time:
+                print(times)
+                index = i
+                flag = True
+                break
+    if flag:
+        policy = page.xpath('/html/body/div[1]/div[2]/div[2]/div[1]/div[2]/div[3]/div/div[2]/div[1]/table/tbody/tr')[2:index + 1]
+        all_policy.append(policy)
+        break
+
+    policy = page.xpath('/html/body/div[1]/div[2]/div[2]/div[1]/div[2]/div[3]/div/div[2]/div[1]/table/tbody/tr')[2:]
     print(len(policy))
     all_policy.append(policy)
     next_btn.click()
     time.sleep(2)
-    next_btn = wd.find_element(By.XPATH, '/html/body/div[1]/div[2]/div[2]/div/div[2]/div[3]/div[2]/a[5]')
+    next_btn = wd.find_element(By.XPATH, '//*[@id="page_public_info_type_xzfgk_tab_0_0"]/a[text()="下一页"]')
     num += 1
 print(len(all_policy))
 wd.close()
@@ -46,7 +70,7 @@ for item in all_policy:
         # print(title)
         href = provence.xpath('.//a[1]/@href')[0]
         belong_to = "芜湖市"
-        create_time = provence.xpath('.//span/text()')
+        create_time = provence.xpath('.//span[2]/text()')
         create_time = ''.join(create_time)
         create_time = create_time.replace('|', '')
         # print(create_time)

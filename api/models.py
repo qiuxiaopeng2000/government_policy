@@ -46,3 +46,7 @@ class user_info_data(models.Model):
         managed = True
         db_table = 'user_info_data'
 
+
+class follow(models.Model):
+    username = models.CharField(max_length=10, blank=True)
+    follow_city = models.CharField(max_length=10, blank=True)

@@ -6,7 +6,7 @@ from libs.spyder_util import get_html, parse_page, browserdriver
 from libs.header import set_header
 
 header = set_header()
-sql_select = "select * from gov_url where name = '安徽'"
+sql_select = "select url from gov_url where name = '安徽'"
 gov_url = select_data(sql_select)
 # print(len(gov_url))
 url = gov_url[0][0]

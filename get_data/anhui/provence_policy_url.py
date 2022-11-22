@@ -22,11 +22,33 @@ all_policy = []
 # next_btn_html = page.xpath('/html/body/div[3]/div[2]/div/div[2]/div[1]/div[2]/div[2]/div/div/div[8]')[0]
 next_btn = wd.find_element(By.XPATH, '/html/body/div[1]/div[3]/div/div[2]/div/div[2]/div/div[3]/a[5]')
 num = 0
+
+select_sql = "select create_time from policy_url where belong_to='安徽' order by create_time desc limit 1"
+last_create_time = select_data(select_sql)
+
 while next_btn.get_attribute('class') != 'disabled' and num < 3:
     # print(num)
     page_html = wd.page_source
     page_html.encode('utf-8')
     page = parse_page(page_html)
+    # 只爬取最新发布的政策
+    policy_times = page.xpath('//*[@id="xxgk_lmcon"]/div[2]/div/ul/li[3]/span/text()')
+    index = 0
+    flag = False
+    if last_create_time is not None:
+        last_create_time = last_create_time[0][0]
+        for i in range(0, len(policy_times)):
+            if str(policy_times[i]) <= last_create_time:
+                print(last_create_time)
+                print(str(policy_times[i]))
+                index = i
+                flag = True
+                break
+    if flag:
+        policy = page.xpath('/html/body/div[1]/div[3]/div/div[2]/div/div[2]/div/div[2]/div')[1:index + 1]
+        all_policy.append(policy)
+        break
+
     policy = page.xpath('/html/body/div[1]/div[3]/div/div[2]/div/div[2]/div/div[2]/div')
     print(len(policy))
     all_policy.append(policy)

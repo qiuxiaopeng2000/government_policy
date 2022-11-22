@@ -4,8 +4,8 @@ from api.models import Data
 from django.core import serializers
 from django.http import JsonResponse
 from get_data.main import *
-from .forms import user_register_form
-from .models import user_info_data
+from .forms import user_register_form, follow_form
+from .models import user_info_data, follow
 
 
 @require_http_methods(["GET"])
@@ -136,6 +136,60 @@ def user_change_password(request):
                 response['msg'] = '1'
                 response['error_num'] = 1
                 response['signal'] = '密码不正确'
+    except Exception as e:
+        response['msg'] = '-1'
+        response['error_num'] = 1
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@require_http_methods(["GET"])
+def follow_city(request):
+    response = {}
+    try:
+        city = request.GET.get('city')
+        username = request.GET.get('username')
+        follow_other = follow_form().save(commit=False)
+        follow_other.follow_city = city
+        follow_other.username = username
+        follow_other.save()
+        response['msg'] = '0'
+        response['signal'] = '关注成功！'
+    except Exception as e:
+        response['msg'] = '-1'
+        response['error_num'] = 1
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@require_http_methods(["GET"])
+def show_follow(request):
+    response = {}
+    try:
+        # city = request.GET.get('city')
+        username = request.GET.get('username')
+        follows = follow.objects.filter(username=username)
+        response['list'] = json.loads(serializers.serialize("json", follows))
+        response['msg'] = '0'
+        response['signal'] = '查询成功！'
+    except Exception as e:
+        response['msg'] = '-1'
+        response['error_num'] = 1
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@require_http_methods(["GET"])
+def delete_follow(request):
+    response = {}
+    try:
+        city = request.GET.get('city')
+        username = request.GET.get('username')
+        follows = follow.objects.filter(username=username, follow_city=city)
+        follows.delete()
+        response['list'] = json.loads(serializers.serialize("json", follows))
+        response['msg'] = '0'
+        response['signal'] = '删除成功！'
     except Exception as e:
         response['msg'] = '-1'
         response['error_num'] = 1

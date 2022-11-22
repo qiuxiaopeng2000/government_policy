@@ -1,5 +1,12 @@
 from django import forms
-from .models import user_info_data
+from .models import user_info_data, follow
+
+
+# 关注表单
+class follow_form(forms.ModelForm):
+    class Meta:
+        model = follow
+        fields = ('username', 'follow_city')
 
 
 # 注册表单
