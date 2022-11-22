@@ -4,6 +4,8 @@ from api.models import Data
 from django.core import serializers
 from django.http import JsonResponse
 from get_data.main import *
+from .forms import user_register_form
+from .models import user_info_data
 
 
 @require_http_methods(["GET"])
@@ -41,4 +43,101 @@ def update_policy(request):
     return JsonResponse(response)
 
 
+# 0: 操作成功, 1: 密码不正确, 2: 用户不存在, 3: 用户已经存在, -1: 错误
+@require_http_methods(["GET"])
+def user_register(request):
+    response = {}
+    try:
+        username = request.GET.get('username')
+        password = request.GET.get('password')
+        if user_info_data.objects.filter(username=username).exists():
+            response['msg'] = '3'
+        else:
+            user_register_info = user_register_form()
+            user_info = user_register_info.save(commit=False)
+            user_info.username = username
+            user_info.password = password
+            user_info.save()
+            response['msg'] = '0'
+            response['error_num'] = 0
+            response['signal'] = '注册成功'
+    except Exception as e:
+        response['msg'] = '-1'
+        response['error_num'] = 1
+        response['error'] = str(e)
+    return JsonResponse(response)
 
+
+@require_http_methods(["GET"])
+def user_login(request):
+    response = {}
+    try:
+        username = request.GET.get('username')
+        password = request.GET.get('password')
+        user = user_info_data.objects.get(username=username)
+        if user.password == password:
+            response['msg'] = '0'
+            response['error_num'] = 0
+            response['signal'] = '登陆成功'
+        else:
+            response['msg'] = '1'
+            response['error_num'] = 1
+            response['signal'] = '密码不正确'
+    except Exception as e:
+        response['msg'] = '-1'
+        response['error_num'] = 1
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+# 0: 操作成功, 1: 密码不正确, 2: 用户不存在, 3: 用户以及存在, -1: 错误
+@require_http_methods(["GET"])
+def user_delete(request):
+    response = {}
+    try:
+        username = request.GET.get('username')
+        password = request.GET.get('password')
+        user = user_info_data.objects.get(username=username)
+        if user.password == password:
+            user.delete()
+            response['msg'] = '0'
+            response['error_num'] = 0
+            response['signal'] = '删除成功!'
+        else:
+            response['msg'] = '1'
+            response['error_num'] = 1
+            response['signal'] = '密码不正确'
+    except Exception as e:
+        response['msg'] = '-1'
+        response['error_num'] = 1
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@require_http_methods(["GET"])
+def user_change_password(request):
+    response = {}
+    try:
+        username = request.GET.get('username')
+        old_password = request.GET.get('old_password')
+        new_password = request.GET.get('new_password')
+        if not user_info_data.objects.filter(username=username).exists():
+            response['msg'] = '2'
+            response['signal'] = '用户不存在'
+        else:
+            user = user_info_data.objects.get(username=username)
+            if user.password == old_password:
+                user.password = new_password
+                user.save()
+                response['msg'] = '0'
+                response['error_num'] = 0
+                response['signal'] = '修改成功！'
+            else:
+                response['msg'] = '1'
+                response['error_num'] = 1
+                response['signal'] = '密码不正确'
+    except Exception as e:
+        response['msg'] = '-1'
+        response['error_num'] = 1
+        response['error'] = str(e)
+    return JsonResponse(response)

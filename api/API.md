@@ -1,17 +1,38 @@
 ### 1. 获取某一城市的政策
-http://127.0.0.1:8000/api/show_policy?<city_name>
+http://127.0.0.1:8000/api/show_policy?city=<city_name>
 
 > example: 查询安徽省政府的政策文件
 > 
-> http://127.0.0.1:8000/api/show_policy?anhui/
+> http://127.0.0.1:8000/api/show_policy?city=安徽/
 > 
 
 
 ### 2. 更新某一城市的政策
-http://127.0.0.1:8000/api/update_policy?<city_name>
+http://127.0.0.1:8000/api/update_policy?city=<city_name>
 
 > example：更新安徽省政府的政策文件
 > 
-> http://127.0.0.1:8000/api/update_policy?anhui/
+> http://127.0.0.1:8000/api/update_policy?city=anhui/
 > 
 > note: 重新爬虫，等待时间较长
+> 
+
+
+### 3. 注册账号
+http://127.0.0.1:8000/api/user_register?username=<username>&password=<password>
+> example:
+> http://127.0.0.1:8000/api/user_register?username=qxp&password=123
+> 
+>
+
+### 4. 用户登录
+http://127.0.0.1:8000/api/user_login?username=<username>&password=<password>
+> example:
+> http://127.0.0.1:8000/api/user_login?username=qxp&password=123
+> 
+
+
+### 5. 修改密码
+http://127.0.0.1:8000/api/user_change_password?username=<username>&old_password=<password>&new_password<password>
+> example:
+> http://127.0.0.1:8000/api/user_change_password?username=qxp&old_password=123&new_password=1234567890

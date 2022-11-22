@@ -35,3 +35,14 @@ class PolicyUrl(models.Model):
     class Meta:
         managed = True
         db_table = 'policy_url'
+
+
+class user_info_data(models.Model):
+    username = models.CharField(max_length=10)
+    password = models.CharField(max_length=45)
+    portrait = models.ImageField(upload_to='portrait/%Y%m%d/', blank=True)
+
+    class Meta:
+        managed = True
+        db_table = 'user_info_data'
+
