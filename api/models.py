@@ -50,3 +50,5 @@ class user_info_data(models.Model):
 class follow(models.Model):
     username = models.CharField(max_length=10, blank=True)
     follow_city = models.CharField(max_length=10, blank=True)
+    follow_category = models.CharField(max_length=10, blank=True)
+    last_time = models.DateField(blank=True, null=True)
