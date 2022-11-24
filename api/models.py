@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Data(models.Model):
@@ -13,6 +14,22 @@ class Data(models.Model):
     class Meta:
         managed = True
         db_table = 'data'
+
+
+class user_info_data(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    portrait = models.ImageField(upload_to='portrait/%Y%m%d/', blank=True)
+
+    class Meta:
+        managed = True
+        db_table = 'user_info_data'
+
+
+class follow(models.Model):
+    username = models.CharField(max_length=10, blank=True)
+    follow_city = models.CharField(max_length=10, blank=True)
+    follow_category = models.CharField(max_length=10, blank=True)
+    last_time = models.DateField(blank=True, null=True)
 
 
 class GovUrl(models.Model):
@@ -35,20 +52,3 @@ class PolicyUrl(models.Model):
     class Meta:
         managed = True
         db_table = 'policy_url'
-
-
-class user_info_data(models.Model):
-    username = models.CharField(max_length=10)
-    password = models.CharField(max_length=45)
-    portrait = models.ImageField(upload_to='portrait/%Y%m%d/', blank=True)
-
-    class Meta:
-        managed = True
-        db_table = 'user_info_data'
-
-
-class follow(models.Model):
-    username = models.CharField(max_length=10, blank=True)
-    follow_city = models.CharField(max_length=10, blank=True)
-    follow_category = models.CharField(max_length=10, blank=True)
-    last_time = models.DateField(blank=True, null=True)

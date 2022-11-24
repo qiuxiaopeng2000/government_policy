@@ -19,18 +19,22 @@ http://127.0.0.1:8000/api/update_policy?city=<city_name>
 
 
 ### 3. 注册账号
-http://127.0.0.1:8000/api/user_register?username=<username>&password=<password>
+http://127.0.0.1:8000/api/user_register?username=<username>&password=<password>&password2=<password2>
 > example:
-> http://127.0.0.1:8000/api/user_register?username=qxp&password=123
+> http://127.0.0.1:8000/api/user_register?username=qxp&password=123&password2=123
 > 
 >
 
 ### 4. 用户登录
-http://127.0.0.1:8000/api/user_login?username=<username>&password=<password>
+http://127.0.0.1:8000/api/user_login?username=<username>&password=<password>&password2=<password2>
 > example:
-> http://127.0.0.1:8000/api/user_login?username=qxp&password=123
+> http://127.0.0.1:8000/api/user_login?username=qxp&password=123&password2=123
 > 
 
+
+### 5. 退出登录
+http://127.0.0.1:8000/api/user_logout?username=<username>
+> http://127.0.0.1:8000/api/user_logout?username=qxp
 
 ### 5. 修改密码
 http://127.0.0.1:8000/api/user_change_password?username=<username>&old_password=<password>&new_password<password>

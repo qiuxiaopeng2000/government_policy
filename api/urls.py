@@ -12,4 +12,5 @@ urlpatterns = [
     url("follow_city$", views.follow_city, name='follow_city'),
     url("show_follow$", views.show_follow, name='show_follow'),
     url("delete_follow$", views.delete_follow, name='delete_follow'),
+    url("user_logout$", views.user_logout, name='user_logout'),
 ]

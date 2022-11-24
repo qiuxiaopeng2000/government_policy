@@ -1,11 +1,14 @@
 import json
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.models import User
 from django.views.decorators.http import require_http_methods
 from api.models import Data
 from django.core import serializers
 from django.http import JsonResponse
 from get_data.main import *
-from .forms import user_register_form, follow_form
-from .models import user_info_data, follow
+from .forms import user_register_form, follow_form, user_info_form, user_login_form
+from .models import follow
 
 
 @require_http_methods(["GET"])
@@ -48,19 +51,23 @@ def update_policy(request):
 def user_register(request):
     response = {}
     try:
-        username = request.GET.get('username')
-        password = request.GET.get('password')
-        if user_info_data.objects.filter(username=username).exists():
-            response['msg'] = '3'
-        else:
-            user_register_info = user_register_form()
-            user_info = user_register_info.save(commit=False)
-            user_info.username = username
-            user_info.password = password
-            user_info.save()
+        new_user_register_form = user_register_form(data=request.GET)
+        new_user_info_form = user_info_form()
+        if new_user_register_form.is_valid():
+            new_user = new_user_register_form.save(commit=False)
+            new_user.set_password(new_user_register_form.cleaned_data['password'])
+            new_user_info_data = new_user_info_form.save(commit=False)
+            new_user_info_data.user = new_user
+            new_user.save()
+            new_user_info_data.save()
+            login(request, new_user)
             response['msg'] = '0'
             response['error_num'] = 0
             response['signal'] = '注册成功'
+        else:
+            response['msg'] = '-1'
+            response['error_num'] = 1
+            response['signal'] = '注册信息格式不正确'
     except Exception as e:
         response['msg'] = '-1'
         response['error_num'] = 1
@@ -72,17 +79,40 @@ def user_register(request):
 def user_login(request):
     response = {}
     try:
-        username = request.GET.get('username')
-        password = request.GET.get('password')
-        user = user_info_data.objects.get(username=username)
-        if user.password == password:
-            response['msg'] = '0'
-            response['error_num'] = 0
-            response['signal'] = '登陆成功'
+        new_user_login_form = user_login_form(data=request.GET)
+        if new_user_login_form.is_valid():
+            data = new_user_login_form.cleaned_data
+            # 检验账号、密码是否正确
+            user = authenticate(username=data['username'], password=data['password'])
+            if user:
+                login(request, user)
+                response['msg'] = '0'
+                response['error_num'] = 0
+                response['signal'] = '登录成功'
+                response['list'] = user.username
+            else:
+                response['msg'] = '0'
+                response['error_num'] = 0
+                response['signal'] = '账号或密码输入有误。请重新输入!'
         else:
-            response['msg'] = '1'
+            response['msg'] = '-1'
             response['error_num'] = 1
-            response['signal'] = '密码不正确'
+            response['signal'] = '账号或密码格式不正确'
+    except Exception as e:
+        response['msg'] = '-1'
+        response['error_num'] = 1
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@require_http_methods(["GET"])
+def user_logout(request):
+    response = {}
+    try:
+        logout(request)
+        response['msg'] = '0'
+        response['error_num'] = 0
+        response['signal'] = '退出成功！'
     except Exception as e:
         response['msg'] = '-1'
         response['error_num'] = 1
@@ -97,8 +127,9 @@ def user_delete(request):
     try:
         username = request.GET.get('username')
         password = request.GET.get('password')
-        user = user_info_data.objects.get(username=username)
-        if user.password == password:
+        user = User.objects.get(username=username)
+        if user.password == password and request.user == user:
+            logout(request)
             user.delete()
             response['msg'] = '0'
             response['error_num'] = 0
@@ -106,7 +137,7 @@ def user_delete(request):
         else:
             response['msg'] = '1'
             response['error_num'] = 1
-            response['signal'] = '密码不正确'
+            response['signal'] = '你没有通过身份验证，你无权注销用户'
     except Exception as e:
         response['msg'] = '-1'
         response['error_num'] = 1
@@ -121,13 +152,13 @@ def user_change_password(request):
         username = request.GET.get('username')
         old_password = request.GET.get('old_password')
         new_password = request.GET.get('new_password')
-        if not user_info_data.objects.filter(username=username).exists():
+        if not User.objects.filter(username=username).exists():
             response['msg'] = '2'
             response['signal'] = '用户不存在'
         else:
-            user = user_info_data.objects.get(username=username)
-            if user.password == old_password:
-                user.password = new_password
+            user = User.objects.get(username=username)
+            if request.user == user and check_password(old_password, user.password):
+                user.password = make_password(request.GET.get('new_password'))
                 user.save()
                 response['msg'] = '0'
                 response['error_num'] = 0
