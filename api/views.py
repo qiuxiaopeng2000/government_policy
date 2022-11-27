@@ -10,8 +10,8 @@ from django.http import JsonResponse
 from get_data.main import *
 from .forms import follow_form, user_info_form, user_login_form, user_change_email_form
 from .models import follow
-from rest_framework.authtoken.views import APIView,AuthTokenSerializer
-from rest_framework.authtoken.models import Token
+# from rest_framework.authtoken.views import APIView, AuthTokenSerializer
+# from rest_framework.authtoken.models import Token
 
 
 @require_http_methods(["GET"])
@@ -294,14 +294,16 @@ def show_user_info(request):
 
 
 @require_http_methods(["GET"])
-def follow_city(request):
+def follow_city_category(request):
     response = {}
     try:
         city = request.GET.get('city')
+        category = request.GET.get('category')
         # username = request.GET.get('username')
         username = request.user.username
         follow_other = follow_form().save(commit=False)
         follow_other.follow_city = city
+        follow_other.follow_category = category
         follow_other.username = username
         follow_other.save()
         response['msg'] = '0'
@@ -348,3 +350,22 @@ def delete_follow(request):
         response['error_num'] = 1
         response['error'] = str(e)
     return JsonResponse(response)
+
+#
+# @require_http_methods(["GET"])
+# def search_fans_username(request):
+#     response = {}
+#     try:
+#         city = request.GET.get('city')
+#         category = request.GET.get('category')
+#         # username = request.GET.get('username')
+#         username = request.user.username
+#         follows = follow.objects.filter(username=username)
+#         response['list'] = json.loads(serializers.serialize("json", follows))
+#         response['msg'] = '0'
+#         response['signal'] = '查询成功！'
+#     except Exception as e:
+#         response['msg'] = '-1'
+#         response['error_num'] = 1
+#         response['error'] = str(e)
+#     return JsonResponse(response)
