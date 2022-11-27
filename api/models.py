@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Data(models.Model):
@@ -23,6 +24,7 @@ MEDIA_ADDR = 'http://localhost:8000/media/'
 class user_info_data(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     portrait = models.ImageField(upload_to='portrait', blank=True)
+    phone = PhoneNumberField(unique=True, null=True, blank=True)
 
     class Meta:
         managed = True

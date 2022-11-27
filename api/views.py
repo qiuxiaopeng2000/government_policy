@@ -128,7 +128,8 @@ def user_logout(request):
 def user_delete(request):
     response = {}
     try:
-        username = request.GET.get('username')
+        # username = request.GET.get('username')
+        username = request.user.username
         password = request.GET.get('password')
         user = User.objects.get(username=username)
         if user.password == password and request.user == user:
@@ -152,7 +153,8 @@ def user_delete(request):
 def user_change_password(request):
     response = {}
     try:
-        username = request.GET.get('username')
+        # username = request.GET.get('username')
+        username = request.user.username
         old_password = request.GET.get('old_password')
         new_password = request.GET.get('new_password')
         if not User.objects.filter(username=username).exists():
@@ -202,6 +204,36 @@ def user_change_email(request):
                 response['msg'] = '1'
                 response['error_num'] = 1
                 response['signal'] = '你无权修改该用户邮箱！'
+    except Exception as e:
+        response['msg'] = '-1'
+        response['error_num'] = 1
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@require_http_methods(["GET"])
+def user_change_phone(request):
+    response = {}
+    try:
+        # username = request.GET.get('username')
+        username = request.user.username
+        phone = request.GET.get('phone')
+        if not User.objects.filter(username=username).exists():
+            response['msg'] = '2'
+            response['signal'] = '用户不存在'
+        else:
+            user = User.objects.get(username=username)
+            if request.user == user:
+                user_data = user_info_data.objects.get(user=user)
+                user_data.phone = phone
+                user_data.save()
+                response['msg'] = '0'
+                response['error_num'] = 0
+                response['signal'] = '修改成功！'
+            else:
+                response['msg'] = '1'
+                response['error_num'] = 1
+                response['signal'] = '你无权修改该用户信息！'
     except Exception as e:
         response['msg'] = '-1'
         response['error_num'] = 1
@@ -266,7 +298,8 @@ def follow_city(request):
     response = {}
     try:
         city = request.GET.get('city')
-        username = request.GET.get('username')
+        # username = request.GET.get('username')
+        username = request.user.username
         follow_other = follow_form().save(commit=False)
         follow_other.follow_city = city
         follow_other.username = username
@@ -285,7 +318,8 @@ def show_follow(request):
     response = {}
     try:
         # city = request.GET.get('city')
-        username = request.GET.get('username')
+        # username = request.GET.get('username')
+        username = request.user.username
         follows = follow.objects.filter(username=username)
         response['list'] = json.loads(serializers.serialize("json", follows))
         response['msg'] = '0'
@@ -302,7 +336,8 @@ def delete_follow(request):
     response = {}
     try:
         city = request.GET.get('city')
-        username = request.GET.get('username')
+        # username = request.GET.get('username')
+        username = request.user.username
         follows = follow.objects.filter(username=username, follow_city=city)
         follows.delete()
         response['list'] = json.loads(serializers.serialize("json", follows))

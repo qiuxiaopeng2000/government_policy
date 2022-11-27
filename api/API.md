@@ -33,13 +33,14 @@ http://127.0.0.1:8000/api/user_login?username=<username>&password=<password>
 
 
 ### 5. 退出登录
-http://127.0.0.1:8000/api/user_logout?username=<username>
-> http://127.0.0.1:8000/api/user_logout?username=qxp
+http://127.0.0.1:8000/api/user_logout?
+> http://127.0.0.1:8000/api/user_logout?
+> 
 
 ### 5. 修改密码
-http://127.0.0.1:8000/api/user_change_password?username=<username>&old_password=<password>&new_password<password>
+http://127.0.0.1:8000/api/user_change_password?old_password=<password>&new_password<password>
 > example:
-> http://127.0.0.1:8000/api/user_change_password?username=qxp&old_password=123&new_password=1234567890
+> http://127.0.0.1:8000/api/user_change_password?old_password=123&new_password=1234567890
 > 
 
 
@@ -48,6 +49,13 @@ http://127.0.0.1:8000/api/user_change_email?email=<email>
 > example:
 > http://127.0.0.1:8000/api/user_change_email?email=2621099562@qq.com
 > 
+
+### 5. 修改phone
+http://127.0.0.1:8000/api/user_change_phone?phone=<phone>
+> example:
+> http://127.0.0.1:8000/api/user_change_phone?phone=18390956471
+> 
+
 
 ### 5. 修改头像
 http://127.0.0.1:8000/api/user_change_portrait?portrait=<portrait_url>
@@ -65,27 +73,27 @@ http://127.0.0.1:8000/api/show_user_info
 
 
 ### 6. 注销账户
-http://127.0.0.1:8000/api/user_delete?username=<username>&password=<password>
+http://127.0.0.1:8000/api/user_delete?password=<password>
 > example:
-> http://127.0.0.1:8000/api/user_delete?username=qxp&old_password=123&new_password=1234567890
+> http://127.0.0.1:8000/api/user_delete?old_password=123&new_password=1234567890
 > 
 
 
 ### 7. 关注城市
-http://127.0.0.1:8000/api/follow_city?username=<username>&city=<city>
+http://127.0.0.1:8000/api/follow_city?city=<city>
 > example:
-> http://127.0.0.1:8000/api/follow_city?username=qxp&city=anhui
+> http://127.0.0.1:8000/api/follow_city?city=anhui
 > 
 
 
 ### 8. 关注列表
-http://127.0.0.1:8000/api/show_follow?username=<username>
+http://127.0.0.1:8000/api/show_follow?
 > example:
-> http://127.0.0.1:8000/api/show_follow?username=qxp
+> http://127.0.0.1:8000/api/show_follow?
 > 
 
 
 ### 9. 取消关注
-http://127.0.0.1:8000/api/delete_follow?username=<username>&city=<city>
+http://127.0.0.1:8000/api/delete_follow?city=<city>
 > example:
-> http://127.0.0.1:8000/api/delete_follow?username=qxp&city=anhui
+> http://127.0.0.1:8000/api/delete_follow?city=anhui

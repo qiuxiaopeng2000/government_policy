@@ -17,7 +17,6 @@ from django.template.context_processors import media
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -28,7 +27,6 @@ SECRET_KEY = 'django-insecure-0*bp(4vg3fl!+@h2(okx-p6-(oft0(smu)m5h86s9o&6y6n5gn
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -42,6 +40,7 @@ INSTALLED_APPS = [
 
     'api',
     'rest_framework',
+    "phonenumber_field",
 ]
 
 # # 登录成功后重定向地址
@@ -78,7 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'government.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -92,7 +90,6 @@ DATABASES = {
         "HOST": "localhost",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -112,7 +109,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -126,7 +122,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
@@ -136,7 +131,6 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 # 配置文件存储目录
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

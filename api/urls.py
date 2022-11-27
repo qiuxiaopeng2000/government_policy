@@ -16,4 +16,5 @@ urlpatterns = [
     url("user_change_email$", views.user_change_email, name='user_change_email'),
     url("user_change_portrait$", views.user_change_portrait, name='user_change_portrait'),
     url("show_user_info$", views.show_user_info, name='show_user_info'),
+    url("user_change_phone$", views.user_change_phone, name='user_change_phone'),
 ]
