@@ -10,7 +10,7 @@ header = {
 }
 
 print("开始爬虫！")
-for index in range(1, 2):
+for index in range(1, 6):
     print("爬取第%s页" % index)
     page1 = urllib.request.Request('http://www.policytop.com/newslist.aspx?fenl=501&twofenl=&page=' + str(index),
                                    headers=header)  # 反爬虫

@@ -33,8 +33,8 @@ http://127.0.0.1:8000/api/user_login?username=<username>&password=<password>
 
 
 ### 5. 退出登录
-http://127.0.0.1:8000/api/user_logout?
-> http://127.0.0.1:8000/api/user_logout?
+http://127.0.0.1:8000/api/user_logout
+> http://127.0.0.1:8000/api/user_logout
 > 
 
 ### 5. 修改密码
@@ -75,25 +75,25 @@ http://127.0.0.1:8000/api/show_user_info
 ### 6. 注销账户
 http://127.0.0.1:8000/api/user_delete?password=<password>
 > example:
-> http://127.0.0.1:8000/api/user_delete?old_password=123&new_password=1234567890
+> http://127.0.0.1:8000/api/user_delete?password=123
 > 
 
 
 ### 7. 关注城市
-http://127.0.0.1:8000/api/follow_city?city=<city>
+http://127.0.0.1:8000/api/follow_city_category?city=<city>&category
 > example:
-> http://127.0.0.1:8000/api/follow_city?city=anhui
+> http://127.0.0.1:8000/api/follow_city_category?city=安徽&category=疫情防控
 > 
 
 
 ### 8. 关注列表
-http://127.0.0.1:8000/api/show_follow?
+http://127.0.0.1:8000/api/show_follow
 > example:
-> http://127.0.0.1:8000/api/show_follow?
+> http://127.0.0.1:8000/api/show_follow
 > 
 
 
 ### 9. 取消关注
 http://127.0.0.1:8000/api/delete_follow?city=<city>
 > example:
-> http://127.0.0.1:8000/api/delete_follow?city=anhui
+> http://127.0.0.1:8000/api/delete_follow?city=安徽&category=疫情防控

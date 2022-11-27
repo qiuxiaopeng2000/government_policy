@@ -34,6 +34,9 @@ class user_info_data(models.Model):
         """返回头像的url"""
         return MEDIA_ADDR + str(self.portrait)
 
+    def get_phone(self):
+        return str(self.phone)
+
 
 class follow(models.Model):
     username = models.CharField(max_length=10, blank=True)

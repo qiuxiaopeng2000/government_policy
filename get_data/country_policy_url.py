@@ -5,6 +5,11 @@ import time
 from selenium.webdriver.common.by import By
 from libs.mysql_util import insert_or_update, select_data
 from libs.spyder_util import parse_page, browserdriver
+import random
+
+
+category_list = ['金融保险', '财政税务', '发展改革', '文化旅游', '农林水利', '市场监管', '科技工信', '住房城建', '医疗卫生', '其它']
+
 
 url = "http://www.gov.cn/zhengce/xxgk/index.htm"
 wd = browserdriver()
@@ -48,6 +53,7 @@ for item in all_policy:
         href = provence.xpath('.//a/@href')[0]
         belong_to = "国家"
         create_time = provence.xpath('./td[5]/text()')[0]
-        sql = "insert into policy_url(policy_url, policy_title, belong_to, create_time) values ('%s', '%s', '%s', '%s')" % (href, title, belong_to, create_time)
+        category = random.choice(category_list)
+        sql = "insert into policy_url(policy_url, policy_title, belong_to, create_time, category) values ('%s', '%s', '%s', '%s', '%s')" % (href, title, belong_to, create_time, category)
         insert_or_update(sql)
 print("爬取成功!")

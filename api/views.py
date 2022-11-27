@@ -21,10 +21,11 @@ def show_policy(request):
         city = request.GET.get('city')
         policys = Data.objects.filter(city=city)
         response['list'] = json.loads(serializers.serialize("json", policys))
-        response['msg'] = 'success'
+        response['msg'] = '0'
         response['error_num'] = 0
     except Exception as e:
-        response['msg'] = str(e)
+        response['signal'] = str(e)
+        response['msg'] = '-1'
         response['error_num'] = 1
     return JsonResponse(response)
 
@@ -39,7 +40,7 @@ def update_policy(request):
         exec(cmd)
         # if city == 'anhui':
         #     spider_anhui()
-        response['msg'] = 'success'
+        response['msg'] = '0'
         response['city'] = city
         response['error_num'] = 0
         response['cmd'] = cmd
@@ -282,7 +283,7 @@ def show_user_info(request):
         username = request.user.username
         user = User.objects.get(username=username)
         user_data = user_info_data.objects.get(user=user)
-        lists = {'username': username, 'email': user.email, 'portrait': user_data.get_portrait_url()}
+        lists = {'username': username, 'email': user.email, 'portrait': user_data.get_portrait_url(), 'phone': user_data.get_phone()}
         response['list'] = lists
         response['msg'] = '0'
         response['signal'] = '查询成功！'
@@ -338,10 +339,16 @@ def delete_follow(request):
     response = {}
     try:
         city = request.GET.get('city')
+        category = request.GET.get('category')
         # username = request.GET.get('username')
+
         username = request.user.username
         follows = follow.objects.filter(username=username, follow_city=city)
-        follows.delete()
+        if city is not None:
+            follows.follow_city = ""
+        if category is not None:
+            follows.follow_category = ""
+        # follows.delete()
         response['list'] = json.loads(serializers.serialize("json", follows))
         response['msg'] = '0'
         response['signal'] = '删除成功！'

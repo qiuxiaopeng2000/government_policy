@@ -3,9 +3,12 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(__file__, "..", "..", "..", "..")))
 import time
 from selenium.webdriver.common.by import By
-
 from libs.mysql_util import insert_or_update, select_data
 from libs.spyder_util import get_html, parse_page, browserdriver, edgedriver
+import random
+
+category_list = ['金融保险', '财政税务', '发展改革', '文化旅游', '农林水利', '市场监管', '科技工信', '住房城建', '医疗卫生', '其它']
+
 
 sql_select = "select url from gov_url where belong_to = '安徽' and name = '芜湖市'"
 gov_url = select_data(sql_select)
@@ -73,7 +76,8 @@ for item in all_policy:
         create_time = provence.xpath('.//span[2]/text()')
         create_time = ''.join(create_time)
         create_time = create_time.replace('|', '')
+        category = random.choice(category_list)
         # print(create_time)
-        sql = "insert into policy_url(policy_url, policy_title, belong_to, create_time) values ('%s', '%s', '%s', '%s')" % (href, title, belong_to, create_time)
+        sql = "insert into policy_url(policy_url, policy_title, belong_to, create_time, category) values ('%s', '%s', '%s', '%s', '%s')" % (href, title, belong_to, create_time, category)
         insert_or_update(sql)
 print("爬取成功!")
