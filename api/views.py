@@ -1,14 +1,17 @@
 import json
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_http_methods
-from api.models import Data
+from api.models import Data, user_info_data
 from django.core import serializers
 from django.http import JsonResponse
 from get_data.main import *
-from .forms import user_register_form, follow_form, user_info_form, user_login_form
+from .forms import follow_form, user_info_form, user_login_form, user_change_email_form
 from .models import follow
+from rest_framework.authtoken.views import APIView,AuthTokenSerializer
+from rest_framework.authtoken.models import Token
 
 
 @require_http_methods(["GET"])
@@ -51,23 +54,23 @@ def update_policy(request):
 def user_register(request):
     response = {}
     try:
-        new_user_register_form = user_register_form(data=request.GET)
-        new_user_info_form = user_info_form()
-        if new_user_register_form.is_valid():
-            new_user = new_user_register_form.save(commit=False)
-            new_user.set_password(new_user_register_form.cleaned_data['password'])
+        username = request.GET.get('username')
+        password = request.GET.get('password')
+        email = request.GET.get('email')
+        if User.objects.filter(username=username).exists():
+            response['signal'] = '用户名已被注册'
+            response['msg'] = '3'
+        else:
+            user = User.objects.create_user(username=username, password=password, email=email)
+            new_user_info_form = user_info_form()
             new_user_info_data = new_user_info_form.save(commit=False)
-            new_user_info_data.user = new_user
-            new_user.save()
+            new_user_info_data.user = user
             new_user_info_data.save()
-            login(request, new_user)
+            # token, created = Token.objects.get_or_create(user=user)
+            login(request, user)
             response['msg'] = '0'
             response['error_num'] = 0
             response['signal'] = '注册成功'
-        else:
-            response['msg'] = '-1'
-            response['error_num'] = 1
-            response['signal'] = '注册信息格式不正确'
     except Exception as e:
         response['msg'] = '-1'
         response['error_num'] = 1
@@ -91,8 +94,8 @@ def user_login(request):
                 response['signal'] = '登录成功'
                 response['list'] = user.username
             else:
-                response['msg'] = '0'
-                response['error_num'] = 0
+                response['msg'] = '1'
+                response['error_num'] = 1
                 response['signal'] = '账号或密码输入有误。请重新输入!'
         else:
             response['msg'] = '-1'
@@ -158,8 +161,9 @@ def user_change_password(request):
         else:
             user = User.objects.get(username=username)
             if request.user == user and check_password(old_password, user.password):
-                user.password = make_password(request.GET.get('new_password'))
+                user.password = make_password(new_password)
                 user.save()
+                login(request, user)
                 response['msg'] = '0'
                 response['error_num'] = 0
                 response['signal'] = '修改成功！'
@@ -167,6 +171,89 @@ def user_change_password(request):
                 response['msg'] = '1'
                 response['error_num'] = 1
                 response['signal'] = '密码不正确'
+    except Exception as e:
+        response['msg'] = '-1'
+        response['error_num'] = 1
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+# @login_required
+@require_http_methods(["GET"])
+def user_change_email(request):
+    response = {}
+    try:
+        # username = request.GET.get('username')
+        username = request.user.username
+        email = request.GET.get('email')
+        if not User.objects.filter(username=username).exists():
+            response['msg'] = '2'
+            response['signal'] = '用户不存在'
+        else:
+            user = User.objects.get(username=username)
+            if request.user == user:
+                user.email = email
+                user.save()
+                response['msg'] = '0'
+                response['error_num'] = 0
+                response['signal'] = '修改成功！'
+
+            else:
+                response['msg'] = '1'
+                response['error_num'] = 1
+                response['signal'] = '你无权修改该用户邮箱！'
+    except Exception as e:
+        response['msg'] = '-1'
+        response['error_num'] = 1
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@require_http_methods(["GET"])
+def user_change_portrait(request):
+    response = {}
+    try:
+        # username = request.GET.get('username')
+        username = request.user.username
+        # portrait = request.FILES.get('portrait')
+        if not User.objects.filter(username=username).exists():
+            response['msg'] = '2'
+            response['signal'] = '用户不存在'
+        else:
+            user = User.objects.get(username=username)
+            if request.user == user:
+                user_info = request.FILES.get('portrait')
+                user_data = user_info_data.objects.get(user=user)
+                user_data.portrait = user_info
+                user_data.save()
+                response['msg'] = '0'
+                response['error_num'] = 0
+                response['signal'] = '%s修改成功！' % user_info
+
+            else:
+                response['msg'] = '1'
+                response['error_num'] = 1
+                response['signal'] = '你无权修改该用户信息！'
+    except Exception as e:
+        response['msg'] = '-1'
+        response['error_num'] = 1
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@require_http_methods(["GET"])
+def show_user_info(request):
+    response = {}
+    try:
+        # city = request.GET.get('city')
+        # username = request.GET.get('username')
+        username = request.user.username
+        user = User.objects.get(username=username)
+        user_data = user_info_data.objects.get(user=user)
+        lists = {'username': username, 'email': user.email, 'portrait': user_data.get_portrait_url()}
+        response['list'] = lists
+        response['msg'] = '0'
+        response['signal'] = '查询成功！'
     except Exception as e:
         response['msg'] = '-1'
         response['error_num'] = 1

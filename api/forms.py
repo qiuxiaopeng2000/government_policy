@@ -63,6 +63,14 @@ class user_info_form(forms.ModelForm):
         fields = ('portrait',)
 
 
+# 修改邮箱表单
+class user_change_email_form(forms.ModelForm):
+    class Meta:
+        model = User
+        # 定义表单包含的字段
+        fields = ('email',)
+
+
 # 粉丝列表
 # class user_follow_form(forms.ModelForm):
 #     class Meta:

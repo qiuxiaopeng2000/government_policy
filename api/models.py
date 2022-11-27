@@ -16,13 +16,21 @@ class Data(models.Model):
         db_table = 'data'
 
 
+# 服务器IP
+MEDIA_ADDR = 'http://localhost:8000/media/'
+
+
 class user_info_data(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    portrait = models.ImageField(upload_to='portrait/%Y%m%d/', blank=True)
+    portrait = models.ImageField(upload_to='portrait', blank=True)
 
     class Meta:
         managed = True
         db_table = 'user_info_data'
+
+    def get_portrait_url(self):
+        """返回头像的url"""
+        return MEDIA_ADDR + str(self.portrait)
 
 
 class follow(models.Model):

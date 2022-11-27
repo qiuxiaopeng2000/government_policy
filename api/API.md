@@ -19,16 +19,16 @@ http://127.0.0.1:8000/api/update_policy?city=<city_name>
 
 
 ### 3. 注册账号
-http://127.0.0.1:8000/api/user_register?username=<username>&password=<password>&password2=<password2>
+http://127.0.0.1:8000/api/user_register?username=<username>&password=<password>&email=<email>
 > example:
-> http://127.0.0.1:8000/api/user_register?username=qxp&password=123&password2=123
+> http://127.0.0.1:8000/api/user_register?username=qxp&password=123&email=2621099562@qq.com
 > 
 >
 
 ### 4. 用户登录
-http://127.0.0.1:8000/api/user_login?username=<username>&password=<password>&password2=<password2>
+http://127.0.0.1:8000/api/user_login?username=<username>&password=<password>
 > example:
-> http://127.0.0.1:8000/api/user_login?username=qxp&password=123&password2=123
+> http://127.0.0.1:8000/api/user_login?username=qxp&password=1234567890
 > 
 
 
@@ -41,6 +41,28 @@ http://127.0.0.1:8000/api/user_change_password?username=<username>&old_password=
 > example:
 > http://127.0.0.1:8000/api/user_change_password?username=qxp&old_password=123&new_password=1234567890
 > 
+
+
+### 5. 修改email
+http://127.0.0.1:8000/api/user_change_email?email=<email>
+> example:
+> http://127.0.0.1:8000/api/user_change_email?email=2621099562@qq.com
+> 
+
+### 5. 修改头像
+http://127.0.0.1:8000/api/user_change_portrait?portrait=<portrait_url>
+> example:
+> http://127.0.0.1:8000/api/user_change_portrait?portrait=portrait/宝儿姐.jpg
+> 
+> 请注意：enctype="multipart/form-data"
+
+
+### 5. 展示用户信息
+http://127.0.0.1:8000/api/show_user_info
+> example:
+> http://127.0.0.1:8000/api/show_user_info
+> 
+
 
 ### 6. 注销账户
 http://127.0.0.1:8000/api/user_delete?username=<username>&password=<password>
