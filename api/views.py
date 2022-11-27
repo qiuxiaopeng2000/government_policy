@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_http_methods
-from api.models import Data, user_info_data
+from api.models import Data, user_info_data, PolicyUrl
 from django.core import serializers
 from django.http import JsonResponse
 from get_data.main import *
@@ -19,8 +19,25 @@ def show_policy(request):
     response = {}
     try:
         city = request.GET.get('city')
-        policys = Data.objects.filter(city=city)
+        policys = PolicyUrl.objects.filter(city=city)
         response['list'] = json.loads(serializers.serialize("json", policys))
+        response['msg'] = '0'
+        response['error_num'] = 0
+    except Exception as e:
+        response['signal'] = str(e)
+        response['msg'] = '-1'
+        response['error_num'] = 1
+    return JsonResponse(response)
+
+
+@require_http_methods(["GET"])
+def show_policy_detail(request):
+    response = {}
+    try:
+        policy_pk = request.GET.get('pk')
+        # policy_pk = str(policy_pk)
+        policy = Data.objects.filter(id=policy_pk)
+        response['list'] = json.loads(serializers.serialize("json", policy))
         response['msg'] = '0'
         response['error_num'] = 0
     except Exception as e:

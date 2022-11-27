@@ -17,6 +17,10 @@ http://127.0.0.1:8000/api/update_policy?city=<city_name>
 > note: 重新爬虫，等待时间较长
 > 
 
+### 3. 查询某一政策具体内容
+http://127.0.0.1:8000/api/show_policy_detail?pk=<pk>
+> example: 
+> http://127.0.0.1:8000/api/show_policy_detail?pk=13
 
 ### 3. 注册账号
 http://127.0.0.1:8000/api/user_register?username=<username>&password=<password>&email=<email>

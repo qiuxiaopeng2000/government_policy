@@ -58,7 +58,7 @@ class GovUrl(models.Model):
 class PolicyUrl(models.Model):
     policy_url = models.URLField(blank=True, null=True)
     policy_title = models.TextField(blank=True, null=True)
-    belong_to = models.TextField(blank=True, null=True)
+    city = models.TextField(blank=True, null=True)
     category = models.TextField(blank=True, null=True)
     create_time = models.TextField(blank=True, null=True)
 
