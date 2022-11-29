@@ -1,6 +1,6 @@
 Traceback (most recent call last):
   File "F:\Python\government\get_data\anhui\provence_policy.py", line 14, in <module>
-    gov_file.columns = ['policy_url', 'policy_title', 'belong_to', 'category', 'create_time']
+    gov_file.columns = ['policy_url', 'policy_title', 'city', 'category', 'create_time']
   File "C:\Users\Lenovo\.conda\envs\py39\lib\site-packages\pandas\core\generic.py", line 5588, in __setattr__
     return object.__setattr__(self, name, value)
   File "pandas\_libs\properties.pyx", line 70, in pandas._libs.properties.AxisProperty.__set__

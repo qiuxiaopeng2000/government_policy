@@ -30,3 +30,13 @@ def spider_wuhu():
         os.system('python F:/研究生/课设/government_policy/get_data/anhui/wuhu/wuhu_policy.py')
 
 
+def spider_hefei():
+    ret = os.system('python F:/研究生/课设/government_policy/get_data/anhui/hefei/hefei_policy_url.py' + " 2>out1.txt")
+    ret1 = os.system('python F:/研究生/课设/government_policy/get_data/anhui/hefei/hefei_policy.py' + " 2>out.txt")
+    if ret != 0 and ret1 != 0:
+        os.system('python F:/研究生/课设/government_policy/get_data/all_provence_url.py')
+        os.system('python F:/研究生/课设/government_policy/get_data/anhui/all_city_url.py')
+        os.system('python F:/研究生/课设/government_policy/get_data/anhui/hefei/hefei_policy_url.py')
+        os.system('python F:/研究生/课设/government_policy/get_data/anhui/hefei/hefei_policy.py')
+
+

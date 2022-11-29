@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('url', models.TextField(blank=True, null=True)),
                 ('name', models.CharField(blank=True, max_length=45, null=True)),
-                ('belong_to', models.CharField(blank=True, max_length=45, null=True)),
+                ('city', models.CharField(blank=True, max_length=45, null=True)),
             ],
             options={
                 'db_table': 'gov_url',
@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('policy_url', models.TextField(blank=True, null=True)),
                 ('policy_title', models.TextField(blank=True, null=True)),
-                ('belong_to', models.TextField(blank=True, null=True)),
+                ('city', models.TextField(blank=True, null=True)),
                 ('category', models.TextField(blank=True, null=True)),
                 ('create_time', models.TextField(blank=True, null=True)),
             ],

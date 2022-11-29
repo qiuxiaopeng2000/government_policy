@@ -14,8 +14,8 @@ for provence in all_provence:
     name = provence.xpath('./a/text()')[0]
     name = ''.join(name.split())
     href = provence.xpath('./a/@href')[0]
-    belong_to = "国家"
-    sql = "insert into gov_url(url, name, belong_to) values ('%s', '%s', '%s')" % (href, name, belong_to)
+    city = "国家"
+    sql = "insert into gov_url(url, name, city) values ('%s', '%s', '%s')" % (href, name, city)
     insert_or_update(sql)
 print("爬取成功!")
 wd.close()

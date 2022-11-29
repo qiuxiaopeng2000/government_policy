@@ -7,7 +7,7 @@ import time
 from libs.mysql_util import insert_or_update, select_data
 from lxml import etree
 
-sql_select = "select * from policy_url where category is not null"
+sql_select = "select * from policy_url where city='宣城市'"
 gov_file = select_data(sql_select)
 gov_file = pd.DataFrame(gov_file)
 gov_file.columns = ['id', 'policy_url', 'policy_title', 'city', 'category', 'create_time']
@@ -19,6 +19,7 @@ header = {
 }
 print("开始爬取每个政策文件的具体内容")
 for i in gov_file.index:
+    print("爬取第%s个政策" % i)
     url = gov_file.loc[i, 'policy_url']
     title = gov_file.loc[i, 'policy_title']
     create_time = gov_file.loc[i, 'create_time']
@@ -31,9 +32,9 @@ for i in gov_file.index:
     page1.encoding = 'utf-8'
     source = page1.text
     soup = etree.HTML(source)
-    head = soup.xpath('/html/body/div[2]/div[1]/div[1]//text()')
+    head = soup.xpath('/html/body/div[1]/div[3]/div[1]//text()')
     head = '\n'.join(head)
-    body = soup.xpath('//*[@id="wrap"]//text()')
+    body = soup.xpath('/html/body/div[1]/div[3]/div[3]//text()')
     body = '\n'.join(body)
     sql = "insert into data(title, url, create_time, city, category, head, body) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (title, url, create_time, city, category, head, body)
     insert_or_update(sql)

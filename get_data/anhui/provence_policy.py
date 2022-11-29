@@ -20,9 +20,9 @@ def get_anhui(i):
     url = gov_file.loc[i, 'policy_url']
     title = gov_file.loc[i, 'policy_title']
     create_time = gov_file.loc[i, 'create_time']
-    city = gov_file.loc[i, 'belong_to']
+    city = gov_file.loc[i, 'city']
     category = gov_file.loc[i, 'category']
-    page1 = requests.get(url, headers=header)
+    page1 = requests.get(url, headers=header, verify=False)
     page1.encoding = 'utf-8'
     source = page1.text
     soup = etree.HTML(source)
@@ -34,10 +34,10 @@ def get_anhui(i):
     insert_or_update(sql)
 
 
-sql_select = "select * from policy_url where belong_to = '安徽'"
+sql_select = "select * from policy_url where city = '安徽'"
 gov_file = select_data(sql_select)
 gov_file = pd.DataFrame(gov_file)
-gov_file.columns = ['id', 'policy_url', 'policy_title', 'belong_to', 'category', 'create_time']
+gov_file.columns = ['id', 'policy_url', 'policy_title', 'city', 'category', 'create_time']
 # print(gov_file.head())
 
 pool = ThreadPoolExecutor(10)

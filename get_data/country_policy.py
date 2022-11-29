@@ -16,7 +16,7 @@ def get_country(i):
     create_time = time.strptime(create_time, "%Y年%m月%d日")
     create_time = time.strftime('%Y-%m-%d', create_time)
     # create_time = time.strftime()
-    city = gov_file.loc[i, 'belong_to']
+    city = gov_file.loc[i, 'city']
     category = gov_file.loc[i, 'category']
     page1 = requests.get(url, headers=header)
     page1.encoding = 'utf-8'
@@ -32,10 +32,10 @@ def get_country(i):
     # time.sleep(2)
 
 
-sql_select = "select * from policy_url where belong_to = '国家'"
+sql_select = "select * from policy_url where city = '国家'"
 gov_file = select_data(sql_select)
 gov_file = pd.DataFrame(gov_file)
-gov_file.columns = ['policy_url', 'policy_title', 'belong_to', 'category', 'create_time']
+gov_file.columns = ['policy_url', 'policy_title', 'city', 'category', 'create_time']
 # print(gov_file.head())
 
 header = {
@@ -47,3 +47,4 @@ print("开始爬取每个政策文件的具体内容")
 for index in gov_file.index:
     get_country(index)
 print("爬取成功！")
+pool.shutdown(wait=True)

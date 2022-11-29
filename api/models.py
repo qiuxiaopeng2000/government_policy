@@ -48,7 +48,7 @@ class follow(models.Model):
 class GovUrl(models.Model):
     url = models.URLField(blank=True, null=True)
     name = models.CharField(max_length=45, blank=True, null=True)
-    belong_to = models.CharField(max_length=45, blank=True, null=True)
+    city = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
         managed = True

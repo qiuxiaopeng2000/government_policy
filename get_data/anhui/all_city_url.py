@@ -29,8 +29,8 @@ for city in all_city:
     name = city.xpath('./text()')[0]
     name = ''.join(name.split())
     href = city.xpath('./@href')[0]
-    belong_to = "安徽"
-    sql = "insert into gov_url(url, name, belong_to) values ('%s', '%s', '%s')" % (href, name, belong_to)
+    city = "安徽"
+    sql = "insert into gov_url(url, name, city) values ('%s', '%s', '%s')" % (href, name, city)
     insert_or_update(sql)
 print("爬取成功!")
 wd.close()

@@ -7,10 +7,10 @@ from libs.mysql_util import insert_or_update, select_data
 from libs.spyder_util import get_html, parse_page, browserdriver, edgedriver
 import random
 
-category_list = ['金融保险', '财政税务', '发展改革', '文化旅游', '农林水利', '市场监管', '科技工信', '住房城建', '医疗卫生', '其它']
+category_list = ['金融保险', '财政税务', '发展改革', '文化旅游', '农林水利', '市场监管', '科技工信', '住房城建', '生态环境', '应急管理', '医疗卫生', '其它']
 
 
-sql_select = "select url from gov_url where belong_to = '安徽' and name = '芜湖市'"
+sql_select = "select url from gov_url where city = '安徽' and name = '芜湖市'"
 gov_url = select_data(sql_select)
 url = gov_url[0][0]
 print(url)
@@ -29,11 +29,11 @@ next_btn = wd.find_element(By.XPATH, '//*[@id="page_public_info_type_xzfgk_tab_0
 
 num = 0
 
-select_sql = "select create_time from policy_url where belong_to='芜湖市' order by create_time desc limit 1"
+select_sql = "select create_time from policy_url where city='芜湖市' order by create_time desc limit 1"
 last_create_time = select_data(select_sql)
-# print(last_create_time)
+print(last_create_time)
 
-while next_btn.get_attribute('class') != 'disabled' and num < 3:
+while next_btn.get_attribute('class') != 'disabled' and num < 10:
     # print(num)
     page_html = wd.page_source
     page_html.encode('utf-8')
@@ -42,7 +42,7 @@ while next_btn.get_attribute('class') != 'disabled' and num < 3:
     policy_times = page.xpath('//*[@id="tab_0_0"]/table/tbody/tr/td[2]/p/span[2]/text()')
     index = 0
     flag = False
-    if last_create_time is not None:
+    if len(last_create_time) >= 1:
         last_create_time = last_create_time[0][0]
         for i in range(0, len(policy_times)):
             times = policy_times[i][6:]
@@ -72,12 +72,12 @@ for item in all_policy:
         title = ''.join(title.split())
         # print(title)
         href = provence.xpath('.//a[1]/@href')[0]
-        belong_to = "芜湖市"
+        city = "芜湖市"
         create_time = provence.xpath('.//span[2]/text()')
         create_time = ''.join(create_time)
         create_time = create_time.replace('|', '')
         category = random.choice(category_list)
         # print(create_time)
-        sql = "insert into policy_url(policy_url, policy_title, belong_to, create_time, category) values ('%s', '%s', '%s', '%s', '%s')" % (href, title, belong_to, create_time, category)
+        sql = "insert into policy_url(policy_url, policy_title, city, create_time, category) values ('%s', '%s', '%s', '%s', '%s')" % (href, title, city, create_time, category)
         insert_or_update(sql)
 print("爬取成功!")

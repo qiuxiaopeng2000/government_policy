@@ -11,7 +11,7 @@ import random
 category_list = ['金融保险', '财政税务', '发展改革', '文化旅游', '农林水利', '市场监管', '科技工信', '住房城建', '医疗卫生', '其它']
 
 
-select_sql = "select create_time from policy_url where belong_to='安徽' order by create_time desc limit 1"
+select_sql = "select create_time from policy_url where city='安徽' order by create_time desc limit 1"
 last_create_time = select_data(select_sql)
 # time.sleep(2)
 # print('last_create_time: ', last_create_time)
@@ -71,10 +71,10 @@ for item in all_policy:
     for provence in item:
         title = provence.xpath('.//li[3]/a/text()')[0]
         href = provence.xpath('.//li[3]/a/@href')[0]
-        belong_to = "安徽"
+        city = "安徽"
         create_time = provence.xpath('.//li[2]/text()')[0]
         category = random.choice(category_list)
-        sql = "insert into policy_url(policy_url, policy_title, belong_to, create_time, category) values ('%s', '%s', '%s', '%s', '%s')" % (href, title, belong_to, create_time, category)
+        sql = "insert into policy_url(policy_url, policy_title, city, create_time, category) values ('%s', '%s', '%s', '%s', '%s')" % (href, title, city, create_time, category)
         insert_or_update(sql)
 print("爬取成功!")
 

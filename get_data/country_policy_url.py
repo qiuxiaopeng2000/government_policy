@@ -17,7 +17,7 @@ wd.get(url)
 all_policy = []
 next_btn = wd.find_element(By.XPATH, '/html/body/div[3]/div[2]/div/div[2]/div[1]/div[2]/div[2]/div/div/div[8]')
 num = 0
-select_sql = "select create_time from policy_url where belong_to='国家' order by create_time desc limit 1"
+select_sql = "select create_time from policy_url where city='国家' order by create_time desc limit 1"
 last_create_time = select_data(select_sql)
 while next_btn.get_attribute('class')[-1] != 'whj_hoverDisable' and num < 3:
     print(num)
@@ -51,9 +51,9 @@ for item in all_policy:
     for provence in item:
         title = provence.xpath('.//a/text()')[0]
         href = provence.xpath('.//a/@href')[0]
-        belong_to = "国家"
+        city = "国家"
         create_time = provence.xpath('./td[5]/text()')[0]
         category = random.choice(category_list)
-        sql = "insert into policy_url(policy_url, policy_title, belong_to, create_time, category) values ('%s', '%s', '%s', '%s', '%s')" % (href, title, belong_to, create_time, category)
+        sql = "insert into policy_url(policy_url, policy_title, city, create_time, category) values ('%s', '%s', '%s', '%s', '%s')" % (href, title, city, create_time, category)
         insert_or_update(sql)
 print("爬取成功!")
