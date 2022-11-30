@@ -1,15 +1,16 @@
+{% load static %}
 <div class="col-4" style="padding-left:5%">
 
 	<div id="message-reminder" style="max-width: 85%;">
 		<ul class="list-group">
 
-			<a href="{% url 'templatesTest:user' %}" class="list-group-item list-group-item-action">安徽省
-				<span class="badge bg-primary rounded-pill" style="float:right">14</span>
+			<a href="#" class="list-group-item list-group-item-action">安徽省
+				<span id="count" class="badge bg-primary rounded-pill" style="float:right">14</span>
 			</a>
-			<a href="{% url 'templatesTest:user' %}" class="list-group-item list-group-item-action">蚌埠市
+			<a href="" class="list-group-item list-group-item-action">蚌埠市
 				<span class="badge bg-primary rounded-pill" style="float:right">3</span>
 			</a>
-			<a href="{% url 'templatesTest:user' %}" class="list-group-item list-group-item-action">马鞍山市
+			<a href="" class="list-group-item list-group-item-action">马鞍山市
 				<span class="badge bg-primary rounded-pill" style="float:right">2</span>
 			</a>
 		</ul>
@@ -54,42 +55,73 @@
 	</div>
 
 	<div class="accordion" id="newest-policy" style="max-width: 85%;">
-		<div class="accordion-item">
-			<h2 class="accordion-header" id="headingOne">
-				<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-				        aria-expanded="false" aria-controls="collapseOne">
-					最新政策1
-				</button>
-			</h2>
-			<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
-			     data-bs-parent="#accordionExample" style="">
-				<div class="accordion-body">
-					<strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin
-					adds the appropriate classes that we use to style each element. These classes control the overall appearance,
-					as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or
-					overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>,
-					though the transition does limit overflow.
-				</div>
-			</div>
-		</div>
-		<div class="accordion-item">
-			<h2 class="accordion-header" id="headingTwo">
-				<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
-				        aria-expanded="false" aria-controls="collapseTwo">
-					最新政策2
-				</button>
-			</h2>
-			<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-			     data-bs-parent="#accordionExample" style="">
-				<div class="accordion-body">
-					<strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin
-					adds the appropriate classes that we use to style each element. These classes control the overall appearance,
-					as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or
-					overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>,
-					though the transition does limit overflow.
-				</div>
-			</div>
-		</div>
+{#		<div class="accordion-item">#}
+{#			<h2 class="accordion-header" id="headingOne">#}
+{#				<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"#}
+{#				        aria-expanded="false" aria-controls="collapseOne">#}
+{#					最新政策1#}
+{#				</button>#}
+{#			</h2>#}
+{#			<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"#}
+{#			     data-bs-parent="#accordionExample" style="">#}
+{#				<div class="accordion-body">#}
+{#					<strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin#}
+{#					adds the appropriate classes that we use to style each element. These classes control the overall appearance,#}
+{#					as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or#}
+{#					overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>,#}
+{#					though the transition does limit overflow.#}
+{#				</div>#}
+{#			</div>#}
+{#		</div>#}
+{#		<div class="accordion-item">#}
+{#			<h2 class="accordion-header" id="headingTwo">#}
+{#				<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"#}
+{#				        aria-expanded="false" aria-controls="collapseTwo">#}
+{#					最新政策2#}
+{#				</button>#}
+{#			</h2>#}
+{#			<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"#}
+{#			     data-bs-parent="#accordionExample" style="">#}
+{#				<div class="accordion-body">#}
+{#					<strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin#}
+{#					adds the appropriate classes that we use to style each element. These classes control the overall appearance,#}
+{#					as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or#}
+{#					overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>,#}
+{#					though the transition does limit overflow.#}
+{#				</div>#}
+{#			</div>#}
+{#		</div>#}
+        <div id="bottom"></div>
 
 	</div>
 </div>
+<script src="{% static 'jquery/jquery-3.3.1.js' %}"></script>
+{% block js %}
+
+    <script type="text/javascript">
+        $(function () {
+            $('.btn-city').click(function () {
+                alert($(this).prev().text())
+                var focusCityName = $(this).prev().text()
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/follow_city',
+                    method: 'get',
+                    data: {'city':focusCityName},
+                    success: function (res) {
+                        if (res.msg == '0') {
+                            alert(res.signal)
+                        } else if (res.msg == '1') {
+                            document.getElementById('div-login-password').class = 'form-group has-danger';
+                            document.getElementsByName('password').class = 'form-control is-invalid';
+                            $('#signal').html(res.signal);
+                        } else if (res.msg == '-1') {
+                            document.getElementById('div-login-password').class = 'form-group has-danger';
+                            document.getElementsByName('password').class = 'form-control is-invalid';
+                            $('#signal').html(res.signal);
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+{% endblock %}

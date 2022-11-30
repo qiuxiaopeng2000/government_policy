@@ -29,6 +29,8 @@ http://127.0.0.1:8000/api/user_register?username=<username>&password=<password>&
 > 
 >
 
+http://127.0.0.1:8000/api/newData
+
 ### 4. 用户登录
 http://127.0.0.1:8000/api/user_login?username=<username>&password=<password>
 > example:

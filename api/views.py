@@ -17,18 +17,46 @@ from .models import follow
 from .utils.MsmService import sendMsm
 
 
+# @require_http_methods(["GET"])
+# def show_policy(request):
+#     response = {}
+#     try:
+#         city = request.GET.get('city')
+#         policys = PolicyUrl.objects.filter(city=city)
+#         response['list'] = json.loads(serializers.serialize("json", policys))
+#         response['msg'] = '0'
+#         response['error_num'] = 0
+#     except Exception as e:
+#         response['signal'] = str(e)
+#         response['msg'] = '-1'
+#         response['error_num'] = 1
+#     return JsonResponse(response)
+
 @require_http_methods(["GET"])
 def show_policy(request):
     response = {}
     try:
         city = request.GET.get('city')
-        policys = PolicyUrl.objects.filter(city=city)
-        response['list'] = json.loads(serializers.serialize("json", policys))
-        response['msg'] = '0'
+        category = request.GET.get('category')
+        #print("12321213" + category)
+        policys = Data.objects.filter(Q(city=city) | Q(category=category))
+        #print(len(policys))
+        #response['list'] = json.loads(serializers.serialize("json", policys))
+        List = []
+        for policy in policys:
+            policyData = {}
+            policyData['title'] = policy.title
+            policyData['city'] = policy.city
+            policyData['url'] = policy.url
+            policyData['id'] = policy.id
+            policyData['category'] = policy.category
+            policyData['create_time'] = policy.create_time
+            List.append(policyData)
+        response['list'] = List
+        response['msg'] = 'success'
         response['error_num'] = 0
     except Exception as e:
-        response['signal'] = str(e)
-        response['msg'] = '-1'
+        response['msg'] = str(e)
         response['error_num'] = 1
     return JsonResponse(response)
 
@@ -83,12 +111,20 @@ def user_register(request):
             response['msg'] = '3'
         else:
             user = User.objects.create_user(username=username, password=password, email=email)
-            new_user_info_form = user_info_form()
-            new_user_info_data = new_user_info_form.save(commit=False)
-            new_user_info_data.user = user
+            # new_user_info_form = user_info_form()
+            # new_user_info_data = new_user_info_form.save(commit=False)
+            # new_user_info_data.user = user
+            print('?????')
+            request.session["info"] = {'username': username}
+            if user_info_data.objects.filter(user_id=user.id).exists():
+                get_user_info = user_info_data.objects.get(user_id=user.id)
+            else:
+                get_user_info = user_info_data.objects.create(user=user)
+            # new_user_info_data = user_info_data.objects.create(user=user)
+            print('+++++')
             # new_user_info_data.save()
             # token, created = Token.objects.get_or_create(user=user)
-            login(request, user)
+            #login(request, user)
             response['msg'] = '0'
             response['error_num'] = 0
             response['signal'] = '注册成功'
@@ -254,7 +290,7 @@ def user_change_phone(request):
                 user_data = user_info_data.objects.get(user=user)
                 # print('!!!!')
                 user_data.phone = phone
-                # user_data.save()
+                user_data.save()
                 response['msg'] = '0'
                 response['error_num'] = 0
                 response['signal'] = '修改成功！'
@@ -323,19 +359,42 @@ def show_user_info(request):
     return JsonResponse(response)
 
 
+# @require_http_methods(["GET"])
+# def follow_city_category(request):
+#     response = {}
+#     try:
+#         city = request.GET.get('city')
+#         category = request.GET.get('category')
+#         # username = request.GET.get('username')
+#         username = request.user.username
+#         follow_other = follow_form().save(commit=False)
+#         follow_other.follow_city = city
+#         follow_other.follow_category = category
+#         follow_other.username = username
+#         follow_other.save()
+#         response['msg'] = '0'
+#         response['signal'] = '关注成功！'
+#     except Exception as e:
+#         response['msg'] = '-1'
+#         response['error_num'] = 1
+#         response['error'] = str(e)
+#     return JsonResponse(response)
+
 @require_http_methods(["GET"])
-def follow_city_category(request):
+def follow_city(request):
     response = {}
     try:
         city = request.GET.get('city')
-        category = request.GET.get('category')
-        # username = request.GET.get('username')
-        username = request.user.username
+        username = request.session.get('info').get('username')
+        print("1232132132" + username)
         follow_other = follow_form().save(commit=False)
         follow_other.follow_city = city
-        follow_other.follow_category = category
         follow_other.username = username
+        print(follow_other.username)
+        follow_other.last_time = time.strftime('%Y-%m-%d', time.localtime(time.time()))
+        print("ejhrehrer")
         follow_other.save()
+        print("12345")
         response['msg'] = '0'
         response['signal'] = '关注成功！'
     except Exception as e:
@@ -343,6 +402,14 @@ def follow_city_category(request):
         response['error_num'] = 1
         response['error'] = str(e)
     return JsonResponse(response)
+
+
+def policy(request):
+    policy_pk = request.GET.get('pk')
+    # policy_pk = str(policy_pk)
+    policy = Data.objects.filter(id=policy_pk).first()
+    return render(request, 'templatesTest/policy.html',
+                  {'policy':policy})
 
 
 @require_http_methods(["GET"])
@@ -459,7 +526,7 @@ def test(request):
 
 
 def newData(request):
-    QuerySet = {'title':'安徽省人民政府关于印发安徽省政府投资管理办法的通知','city':'合肥','url':'https://www.ah.gov.cn/public/1681/554182711.html','category':'疫情'}
+    QuerySet = {'title':'安徽省人民政府关于印发安徽省政府投资管理办法的通知','city':'安徽省','url':'https://www.ah.gov.cn/public/1681/554182711.html','category':'疫情'}
     Data.objects.create(**QuerySet)
     return JsonResponse({"status": "true"})
 

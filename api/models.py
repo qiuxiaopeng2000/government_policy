@@ -25,6 +25,8 @@ class user_info_data(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     portrait = models.ImageField(upload_to='portrait', blank=True)
     phone = PhoneNumberField(unique=True, null=True, blank=True)
+    # identifier = models.CharField(max_length=40, unique=True)
+    # USERNAME_FIELD = 'identifier'
     # username =
 
     class Meta:
@@ -44,6 +46,7 @@ class follow(models.Model):
     follow_city = models.CharField(max_length=10, blank=True)
     follow_category = models.CharField(max_length=10, blank=True)
     last_time = models.DateField(blank=True, null=True)
+
 
 
 class GovUrl(models.Model):

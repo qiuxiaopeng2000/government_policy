@@ -28,9 +28,10 @@ def myhandler(sender, instance, **kwargs):
 @receiver(post_save, sender=models.Data)
 def myhandler(sender, instance, **kwargs):
         #print(map['qqt'])
-        print("?????????????/")
+       # print("?????????????/")
+       # print("hha" + instance.city)
         userNameArray = follow_users(instance.city,instance.category)
-        print(len(userNameArray))
+        #print(len(userNameArray))
         row_dict = {
             # 'username':instance.username,
             # 'id':instance.id
@@ -40,23 +41,26 @@ def myhandler(sender, instance, **kwargs):
             'category':instance.category
         }
         for username in userNameArray:
-            print(username)
+            #print(username)
             user = User.objects.get(username=username)
-            user_data = models.user_info_data.objects.filter(user=user).first()
-            #sendMsm(user.phone)
-            if not user_data.phone == '':
-                send_sms.delay(str(user_data.phone))
-            if not user.email == '':
-                if not row_dict.get("city"):
-                #send_mail('您关注的城市' + row_dict.get('city') + '有政策更新', user.email,row_dict.get('title') + row_dict.get('url')).delay()
-                    send_mail.delay('您关注的城市' + row_dict.get('city') + '有政策更新', user.email,row_dict.get('title') + row_dict.get('url'))
-                if not row_dict.get("category"):
-                #send_mail('您关注的标签' + row_dict.get('category') + '有政策更新', user.email,row_dict.get('title') + row_dict.get('url')).delay()
-                    send_mail.delay('您关注的标签' + row_dict.get('category') + '有政策更新', user.email,row_dict.get('title') + row_dict.get('url'))
-                else:
-                    send_mail.delay('您关注的城市' + row_dict.get('city') + '和标签' + row_dict.get('category') +  '有政策更新', user.email ,row_dict.get('title') + row_dict.get('url'))
-            if username in map:
-                map.get(username).send(json.dumps(row_dict, ensure_ascii=False))
+            #print(user.id)
+            if user is not None:
+                user_data = models.user_info_data.objects.filter(user=user).first()
+                # print(user_data.id)
+                #sendMsm(user.phone)
+                if not user_data.phone == '':
+                    send_sms.delay(str(user_data.phone))
+                if not user.email == '':
+                    if not row_dict.get("city"):
+                    #send_mail('您关注的城市' + row_dict.get('city') + '有政策更新', user.email,row_dict.get('title') + row_dict.get('url')).delay()
+                        send_mail.delay('您关注的城市' + row_dict.get('city') + '有政策更新', user.email,row_dict.get('title') + row_dict.get('url'))
+                    if not row_dict.get("category"):
+                    #send_mail('您关注的标签' + row_dict.get('category') + '有政策更新', user.email,row_dict.get('title') + row_dict.get('url')).delay()
+                        send_mail.delay('您关注的标签' + row_dict.get('category') + '有政策更新', user.email,row_dict.get('title') + row_dict.get('url'))
+                    else:
+                        send_mail.delay('您关注的城市' + row_dict.get('city') + '和标签' + row_dict.get('category') +  '有政策更新', user.email ,row_dict.get('title') + row_dict.get('url'))
+                if username in map:
+                    map.get(username).send(json.dumps(row_dict, ensure_ascii=False))
         #if instance.city == models.follow.objects.filter(username='qqt').first().follow_city:
             # row_dict = {
             #     # 'username':instance.username,
@@ -84,7 +88,7 @@ class UserConsumer(WebsocketConsumer):
         #     self.room_group_name, self.channel_name
         # )
         map[self.user_name] = self
-        print("连接建立成功")
+        print("连接建立成功"+ self.user_name)
         self.accept()
 
     def disconnect(self, close_code):

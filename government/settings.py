@@ -137,6 +137,8 @@ MEDIA_URL = '/media/'
 # 配置文件存储目录
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
+AUTH_USER_MODEL = 'auth.User'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

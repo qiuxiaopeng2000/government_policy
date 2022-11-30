@@ -1,16 +1,17 @@
-<div class="col-8">
+{% load static %}
+<div class="col-8" id="app">
 
 	<ul class="nav nav-tabs" role="tablist">
 		<li class="nav-item" role="presentation">
-			<a class="nav-link active" data-bs-toggle="tab" href="#notice" aria-selected="true" role="tab"
+			<a class="nav-link" data-bs-toggle="tab" href="#notice" aria-selected="true" role="tab"
 			   tabindex="0">政策通知</a>
 		</li>
 		<li class="nav-item" role="presentation">
 			<a class="nav-link" data-bs-toggle="tab" href="#analysis" aria-selected="false" role="tab"
-			   tabindex="1">政策解读</a>
+			   tabindex="1" >疫情1</a>
 		</li>
 		<li class="nav-item" role="presentation">
-			<a class="nav-link" data-bs-toggle="tab" href="#newest" aria-selected="false" role="tab" tabindex="2">最新资讯</a>
+			<a class="nav-link" data-bs-toggle="tab" href="#newest" aria-selected="false" role="tab" tabindex="2" @click="getPolicy($event)">农林水利</a>
 		</li>
 	</ul>
 
@@ -19,46 +20,14 @@
 			<table class="table table-hover" id="notice-table" data-pagination="true" data-side-pagination="client"
 			       data-page-size="4">
 				<tbody>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）解封的通知</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）解封的通知</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）解封的通知</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）解封的通知</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）解封的通知</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）解封的通知</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）解封的通知</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）解封的通知</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）解封的通知</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）解封的通知</th>
-					<td>2022/11/27</td>
-				</tr>
+                {% for policy in dataList %}
+                    <tr class="table-default">
+                        <th  scope="row"><a href="/api/policy?pk={{ policy.id }}">{{ policy.title }}</a></th>
+                        <td style="color: #0a53be">{{ policy.city }}</td>
+                        <td style="color: #0b5ed7">{{ policy.category }}</td>
+                        <td>{{ policy.create_time }}<td>
+                    </tr>
+                {% endfor %}
 				</tbody>
 			</table>
 			<div>
@@ -137,65 +106,137 @@
 		<div class="tab-pane fade div-tab-content" id="newest" role="tabpanel">
 			<table class="table table-hover">
 				<tbody>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>
-					<td>2022/11/27</td>
+                <div>???????????/</div>
+				<tr class="table-default" v-for="item,index in PolicyData" v-bind:key="item.id">
+                    {% verbatim %}
+                        <th  scope="row"><a :href="'/api/policy?pk=' + item.id">{{ item.title }}</a></th>
+                        <td style="color: #0a53be">{{ item.city }}</td>
+                        <td style="color: #0b5ed7">{{ item.category }}</td>
+                        <td>{{ item.create_time }}<td>
+                    {% endverbatim %}
+				</tr>
+                <tr class="table-default" v-for="item,index in items" v-bind:key="index">
+					{% verbatim %}
+					    <th scope="row">{{ index }}</th>
+					    <td>{{ item.message }}</td>
+					{% endverbatim %}
 				</tr>
 				<tr class="table-default">
 					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>
 					<td>2022/11/27</td>
 				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>
-					<td>2022/11/27</td>
-				</tr>
-				<tr class="table-default">
-					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>
-					<td>2022/11/27</td>
-				</tr>
+{#				<tr class="table-default">#}
+{#					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>#}
+{#					<td>2022/11/27</td>#}
+{#				</tr>#}
+{#				<tr class="table-default">#}
+{#					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>#}
+{#					<td>2022/11/27</td>#}
+{#				</tr>#}
+{#				<tr class="table-default">#}
+{#					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>#}
+{#					<td>2022/11/27</td>#}
+{#				</tr>#}
+{#				<tr class="table-default">#}
+{#					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>#}
+{#					<td>2022/11/27</td>#}
+{#				</tr>#}
+{#				<tr class="table-default">#}
+{#					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>#}
+{#					<td>2022/11/27</td>#}
+{#				</tr>#}
+{#				<tr class="table-default">#}
+{#					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>#}
+{#					<td>2022/11/27</td>#}
+{#				</tr>#}
+{#				<tr class="table-default">#}
+{#					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>#}
+{#					<td>2022/11/27</td>#}
+{#				</tr>#}
+{#				<tr class="table-default">#}
+{#					<th scope="row">关于中国科学技术大学（高新校区）的最新资讯</th>#}
+{#					<td>2022/11/27</td>#}
+{#				</tr>#}
 				</tbody>
 			</table>
 		</div>
 	</div>
 </div>
-
+{% block js %}
+    <script src="{% static 'vue.js' %}"></script>
 <script>
+    var vm = new Vue({
+            el:"#app",
+            data:{
+                items:[
+                    {message:'Foo'},
+                    {message:'Bar'}
+                ],
+                object:{
+                    title:"123",
+                    author:"qqt",
+                    phone:"123456"
+                },
+                PolicyData:[{'a':1}],
+                datas:[]
+            },
+            methods:{
+                getPolicy:function (event){
+                    //alert(event.target.innerHTML)
+                    $.ajax({
+                        url:"http://127.0.0.1:8000/api/show_policy",
+                        method:'get',
+                        data:{
+                            'category':event.target.innerHTML
+                        },
+                        dataType:'json',
+                        success:function(res){
+                            //alert(res.list)
+                            if(res.msg == 'success') {
+                                vm.PolicyData = res.list
+                            }
+                        //    var that = this;
+                       //     $.each(res.list,function (index,value){
+                                //console.log(index)
+                                //console.log(value.fields)
+                                {#var data = {}#}
+                                {#data.title = value.fields.title#}
+                                {#data.city = value.fields.city#}
+                                {#data.createTime = value.fields.create_time#}
+                                {#data.category = value.fields.category#}
+                                {#data.url = value.fields.url#}
+                               // alert(that.PolicyData.at(0))
+                                //that.PolicyData.push(data)
 
-	$('#notice-table').bootstrapTable({
-		columns: [{
-			field: 'filename',
-			title: 'filename'
-		},{
-			field: 'date',
-			title: 'date'
-		},]
-	});
+                        //    })
+                            {#if (res.msg == 'success'){#}
+                            {#    //console.log("hhah"+this.items)#}
+                            {#   // this.PolicyData = res.list#}
+                            {#    this.datas = res.list#}
+                            {##}
+                            {#    this.PolicyData.forEach((item) => {#}
+                            {#        alert(item.city)#}
+                            {#        alert(item.title)#}
+                            {#    })#}
+
+
+                        }
+                    })
+                }
+            }
+        })
+	{#$('#notice-table').bootstrapTable({#}
+	{#	columns: [{#}
+	{#		field: 'filename',#}
+	{#		title: 'filename'#}
+	{#	},{#}
+	{#		field: 'date',#}
+	{#		title: 'date'#}
+	{#	},]#}
+	//);}
 
 
 
 
 </script>
+{% endblock %}

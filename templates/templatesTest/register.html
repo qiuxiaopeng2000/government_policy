@@ -12,16 +12,16 @@
 		<div class="col-8 div-form-2">
 			<form>
 				<div class="div-form-group">
-					<label for="username" class="form-label mt-4">用户名</lable>
+                    <label for="username" class="form-label mt-4">用户名</label>
 					<input type="text" class="form-control" id="username" placeholder="请输入您的用户名">
-				</div>
+                </div>
 				<div class="div-form-group" id="div-login-password">
 					<label for="password" class="form-label mt-4">密码</label>
 					<input type="password" class="form-control" id="password" placeholder="请输入您的密码">
 					<div class="invalid-feedback" id="signal"></div>
 				</div>
 				<div class="div-form-group div-from-button">
-					<input class="btn btn-primary" type="button" id="submit" value="注册">
+					<input class="btn btn-primary" type="button" id="LoginSumbit" value="注册">
 				</div>
 			</form>
 		</div>
@@ -31,25 +31,27 @@
 </div>
 {% endblock content %}
 
-
+{% block js %}
 <script>
-	var username = $('#username').val();
-	var password = $('#password').val();
-	$('login').click(function(){
+
+	$('#LoginSumbit').click(function(){
 		$.ajax({
-			url:'http://127.0.0.1:8000/api/user_login',
+			url:'http://127.0.0.1:8000/api/user_register',
 			method : 'get',
-			data : {'username':username, 'password': password},
+			data : {'username':$('#username').val(), 'password': $('#password').val()},
 			success : function(res){
-				if(res.msg == '0'){
-					location.href = '####';
+                alert(res.msg)
+                alert(res.error)
+				if(res.msg == '0' || res.msg == '-1'){
+                    alert("！！！！！！！！！！！！！！！！")
+					location.href = '/intersection/home';
 				}else if(res.msg == '1'){
 					document.getElementById('div-login-password').class = 'form-group has-danger';
-					document.getElementByName('password').class = 'form-control is-invalid';
+					document.getElementsByName('password').class = 'form-control is-invalid';
 					$('#signal').html(res.signal);
 				}else if(res.msg == '-1'){
 					document.getElementById('div-login-password').class = 'form-group has-danger';
-					document.getElementByName('password').class = 'form-control is-invalid';
+					document.getElementsByName('password').class = 'form-control is-invalid';
 					$('#signal').html(res.signal);
 				}
 			},
@@ -57,3 +59,4 @@
 	});
 
 </script>
+{% endblock %}
