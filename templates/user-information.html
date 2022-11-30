@@ -1,0 +1,211 @@
+<div class="col-8">
+    <div class="row">
+        <div class="col-4">
+            <form method="post" action="{% url 'templatesTest:user_data_info' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                {#                <label for="portrait">上传头像</label>#}
+                {% if portrait %}
+                    <img src="{{ portrait.url }}" style="max-width: 20%; border-radius: 15%;">
+                {% endif %}
+                <input type="file" class="form-control-file" name="portrait" id="portrait">
+                <button type="submit" class="btn btn-primary">提交</button>
+            </form>
+        </div>
+
+        <div class="col-8">
+            <form id="userinfo">
+                <fieldset>
+                    <legend>用户信息</legend>
+                    <div class="form-group row div-form-group">
+                        <lable for="username" class="col-sm-2 col-form-label">用 户 名</lable>
+                        <div class="col-sm-10">
+                            <input type="text" readonly="" class="form-control-plaintext" id="username"
+                                   style="color:#777"
+                                   value="{{ username }}">
+                        </div>
+                    </div>
+                    <div class="form-group row div-form-group">
+                        <lable for="password" class="col-sm-2 col-form-label">密 码</lable>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control-plaintext" id="password"
+                                   style="color:#777"
+                                   value="Enter a password">
+                            <a href="#" style="text-align:center;" id="update_password">点击修改</a>
+                        </div>
+                    </div>
+                    <div class="div-form-group">
+                        <label for="email" class="form-label mt-4">邮 箱</label>
+                        <input type="email" class="form-control" id="email" aria-describedby="email-help"
+                               placeholder="{{ email }}">
+                        <small id="email-help" class="form-text text-muted">我们不会在别处使用您的邮箱。</small>
+                        <a href="#" style="text-align:center;" id="update_email">点击绑定</a>
+                        <a href="#" style="text-align:center;">点击解绑</a>
+                    </div>
+                    <div class="div-form-group">
+                        <label for="tel" class="form-label mt-4">手 机</label>
+                        <input type="tel" class="form-control" id="tel" aria-describedby="tel-help"
+                               placeholder="{{ phone }}">
+                        <small id="tel-help" class="form-text text-muted">我们不会在别处使用您的手机号码。</small>
+                        <a href="#" style="text-align:center;" id="update_phone">点击绑定</a>
+                        <a href="#" style="text-align:center;">点击解绑</a>
+                    </div>
+                </fieldset>
+            </form>
+
+            <form id="follow" style="margin-top:10%">
+                <fieldset>
+                    <legend>关注列表</legend>
+                    <div class="div-form-group" style="margin-top:12%">
+                        {#                        <div class="form-check div-form-check">#}
+                        {#                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked="">#}
+                        {#                            <label class="form-check-label" for="flexCheckDefault">#}
+                        {#                                安徽省#}
+                        {#                            </label>#}
+                        {#                        </div>#}
+                        {#                        <div class="form-check div-form-check">#}
+                        {#                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked="">#}
+                        {#                            <label class="form-check-label" for="flexCheckChecked">#}
+                        {#                                福建省#}
+                        {#                            </label>#}
+                        {#                        </div>#}
+                        {#                        <div class="div-form-group div-from-button" style="margin-right:40%">#}
+                        {#                            <input class="btn btn-primary" type="button" id="submit" value="确认">#}
+                        {#                        </div>#}
+                        {% for item in follows %}
+                            {% if item.follow_city %}
+                                <div>
+                                    <lable for="city" class="form-check-label">{{ item.follow_city }}</lable>
+                                    <input class="btn btn-outline-primary btn-sm btn-city" type="button" id="btn-city"
+                                           value="取消关注">
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% for item in follows %}
+                            {% if item.follow_category %}
+                                <div>
+                                    <lable for="city" class="form-check-label">{{ item.follow_category }}</lable>
+                                    <input class="btn btn-outline-primary btn-sm btn-city" type="button"
+                                           id="btn-category"
+                                           value="取消关注">
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script src="/static/jquery/jquery-3.3.1.js"></script>
+<script>
+    $('#portrait').on('change', function () {
+        // 获取用户最后一次选择的图片
+        var choose_file = $(this)[0].files[0];
+        // 创建一个新的FileReader对象，用来读取文件信息
+        var reader = new FileReader();
+        // 读取用户上传的图片的路径
+        reader.readAsDataURL(choose_file);
+        // 读取完毕之后，将图片的src属性修改成用户上传的图片的本地路径
+        reader.onload = function () {
+            $("#avatar-img").attr("src", reader.result)
+        }
+    });
+    $('#update_password').on('click', function () {
+        var password = $('#password').val();
+        $.ajax({
+            processData: false,
+            contentType: false,
+            {#修改密码接口#}
+            url: 'http://127.0.0.1:8000/api/user_change_password?new_password=' + password,
+            type: 'get',
+            data: {'password': password},
+            success: function (arg) {
+                if (arg.msg == 0) {
+                    alert('成功！')
+                } else {
+                    alert('失败！')
+                }
+            }
+        })
+    });
+    $('#update_email').on('click', function () {
+        var email = $('#email').val();
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/user_change_email?email=' + email,
+            type: 'get',
+            {#data: {'email': email},#}
+            success: function (arg) {
+                if (arg.msg == 0) {
+                    alert('成功！')
+                } else {
+                    alert('失败！')
+                }
+            }
+        })
+    });
+    $('#update_phone').on('click', function () {
+        var phone = $('#tel').val();
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/user_change_phone?phone=' + phone,
+            type: 'get',
+            data: {'phone': phone},
+            success: function (arg) {
+                if (arg.msg == 0) {
+                    alert('成功！')
+                } else {
+                    alert('失败！')
+                }
+            }
+        })
+    });
+    $(function () {
+        $('.btn-city').click(function () {
+            {#alert($(this).prev().text())#}
+            var focusCityName = $(this).prev().text();
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/delete_follow?city=' + focusCityName,
+                method: 'get',
+                data: {'city': focusCityName},
+                success: function (res) {
+                    if (res.msg == '0') {
+                        alert(res.signal)
+                    } else if (res.msg == '1') {
+                        document.getElementById('div-login-password').class = 'form-group has-danger';
+                        document.getElementsByName('password').class = 'form-control is-invalid';
+                        $('#signal').html(res.signal);
+                    } else if (res.msg == '-1') {
+                        document.getElementById('div-login-password').class = 'form-group has-danger';
+                        document.getElementsByName('password').class = 'form-control is-invalid';
+                        $('#signal').html(res.signal);
+                    }
+                }
+            })
+        })
+    });
+    $(function () {
+        $('.btn-category').click(function () {
+            {#alert($(this).prev().text())#}
+            var focusCategoryName = $(this).prev().text();
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/delete_follow?category=' + focusCategoryName,
+                method: 'get',
+                data: {'category': focusCategoryName},
+                success: function (res) {
+                    if (res.msg == '0') {
+                        alert(res.signal)
+                    } else if (res.msg == '1') {
+                        document.getElementById('div-login-password').class = 'form-group has-danger';
+                        document.getElementsByName('password').class = 'form-control is-invalid';
+                        $('#signal').html(res.signal);
+                    } else if (res.msg == '-1') {
+                        document.getElementById('div-login-password').class = 'form-group has-danger';
+                        document.getElementsByName('password').class = 'form-control is-invalid';
+                        $('#signal').html(res.signal);
+                    }
+                }
+            })
+        })
+    })
+</script>

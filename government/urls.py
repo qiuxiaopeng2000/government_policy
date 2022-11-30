@@ -15,14 +15,21 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf.urls.static import static
+from intersection.views import login
+from django.views.static import serve
+from .settings import MEDIA_ROOT
+
+# from api.views import user_login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include("api.urls")),
+    path('', login, name='login'),
+    path('intersection/', include("intersection.urls")),
+    re_path('media/(?P<path>.*)', serve, {"document_root": MEDIA_ROOT}),
 ]
-
 
 # 主路由中：显性告诉django绑定media_url和media_root
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

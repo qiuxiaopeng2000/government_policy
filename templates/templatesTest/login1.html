@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  登陆
+{% endblock title %}
+
+{% block content %}\
+<div class="container-fluid">
+	<div class="row div-content">
+		<div class="col-2"></div>
+		<div class="col-8 div-form-2">
+			<form>
+				<div class="div-form-group">
+					<label for="username" class="form-label mt-4">用户名</label>
+					<input type="text" class="form-control" id="username" placeholder="请输入您的用户名">
+				</div>
+				<div class="div-form-group" id="div-login-password">
+					<label for="password" class="form-label mt-4">密 码</label>
+					<input type="password" class="form-control" id="password" placeholder="请输入您的密码">
+					<div class="invalid-feedback" id="signal"></div>
+				</div>
+
+				<div class="div-form-group div-from-button">
+					<input class="btn btn-primary" type="button" id="login" value="登陆">
+				</div>
+
+			</form>
+		</div>
+
+		<div class="col-2"></div>
+	</div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+	var username = $('#username').val();
+	var password = $('#password').val();
+	$('#login').on('click', function(){
+		$.ajax({
+			method : 'get',
+            url:'http://127.0.0.1:8000/api/user_login?' + 'username=' + username + '&password=' + password,
+			data : {'username':username, 'password': password},
+			success : function(res){
+				if(res.msg == '0'){
+					{#location.href = '####';#}
+                    alert('成功')
+				}else if(res.msg == '1'){
+					document.getElementById('div-login-password').class = 'form-group has-danger';
+					document.getElementByName('password').class = 'form-control is-invalid';
+					$('#signal').html(res.signal);
+				}else if(res.msg == '-1'){
+					document.getElementById('div-login-password').class = 'form-group has-danger';
+					document.getElementByName('password').class = 'form-control is-invalid';
+					$('#signal').html(res.signal);
+				}
+			},
+		});
+	});
+
+</script>
+{% endblock %}

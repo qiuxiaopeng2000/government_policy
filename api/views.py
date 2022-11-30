@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import User
+from django.db.models import Q
+from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 from api.models import Data, user_info_data, PolicyUrl
 from django.core import serializers
@@ -12,6 +14,7 @@ from .forms import follow_form, user_info_form, user_login_form, user_change_ema
 from .models import follow
 # from rest_framework.authtoken.views import APIView, AuthTokenSerializer
 # from rest_framework.authtoken.models import Token
+from .utils.MsmService import sendMsm
 
 
 @require_http_methods(["GET"])
@@ -83,7 +86,7 @@ def user_register(request):
             new_user_info_form = user_info_form()
             new_user_info_data = new_user_info_form.save(commit=False)
             new_user_info_data.user = user
-            new_user_info_data.save()
+            # new_user_info_data.save()
             # token, created = Token.objects.get_or_create(user=user)
             login(request, user)
             response['msg'] = '0'
@@ -104,6 +107,7 @@ def user_login(request):
         if new_user_login_form.is_valid():
             data = new_user_login_form.cleaned_data
             # 检验账号、密码是否正确
+            username = data['username']
             user = authenticate(username=data['username'], password=data['password'])
             if user:
                 login(request, user)
@@ -111,6 +115,7 @@ def user_login(request):
                 response['error_num'] = 0
                 response['signal'] = '登录成功'
                 response['list'] = user.username
+                request.session["info"] = {'username': username}
             else:
                 response['msg'] = '1'
                 response['error_num'] = 1
@@ -123,6 +128,7 @@ def user_login(request):
         response['msg'] = '-1'
         response['error_num'] = 1
         response['error'] = str(e)
+    # return render(request, 'login/login.html', response)
     return JsonResponse(response)
 
 
@@ -173,15 +179,15 @@ def user_change_password(request):
     try:
         # username = request.GET.get('username')
         username = request.user.username
-        old_password = request.GET.get('old_password')
-        new_password = request.GET.get('new_password')
+        # old_password = request.GET.get('old_password')
+        password = request.GET.get('password')
         if not User.objects.filter(username=username).exists():
             response['msg'] = '2'
             response['signal'] = '用户不存在'
         else:
             user = User.objects.get(username=username)
-            if request.user == user and check_password(old_password, user.password):
-                user.password = make_password(new_password)
+            if request.user == user:
+                user.password = make_password(password)
                 user.save()
                 login(request, user)
                 response['msg'] = '0'
@@ -206,6 +212,7 @@ def user_change_email(request):
         # username = request.GET.get('username')
         username = request.user.username
         email = request.GET.get('email')
+        # print('??????')
         if not User.objects.filter(username=username).exists():
             response['msg'] = '2'
             response['signal'] = '用户不存在'
@@ -235,6 +242,7 @@ def user_change_phone(request):
     try:
         # username = request.GET.get('username')
         username = request.user.username
+        # print('?????', username)
         phone = request.GET.get('phone')
         if not User.objects.filter(username=username).exists():
             response['msg'] = '2'
@@ -242,9 +250,11 @@ def user_change_phone(request):
         else:
             user = User.objects.get(username=username)
             if request.user == user:
+                # print('!!!!')
                 user_data = user_info_data.objects.get(user=user)
+                # print('!!!!')
                 user_data.phone = phone
-                user_data.save()
+                # user_data.save()
                 response['msg'] = '0'
                 response['error_num'] = 0
                 response['signal'] = '修改成功！'
@@ -264,8 +274,10 @@ def user_change_portrait(request):
     response = {}
     try:
         # username = request.GET.get('username')
-        username = request.user.username
-        # portrait = request.FILES.get('portrait')
+        # username = request.user.username
+        username = 'qxp1'
+        portrait = request.FILES.get('portrait')
+        print(portrait)
         if not User.objects.filter(username=username).exists():
             response['msg'] = '2'
             response['signal'] = '用户不存在'
@@ -275,7 +287,7 @@ def user_change_portrait(request):
                 user_info = request.FILES.get('portrait')
                 user_data = user_info_data.objects.get(user=user)
                 user_data.portrait = user_info
-                user_data.save()
+                # user_data.save()
                 response['msg'] = '0'
                 response['error_num'] = 0
                 response['signal'] = '%s修改成功！' % user_info
@@ -358,13 +370,18 @@ def delete_follow(request):
         city = request.GET.get('city')
         category = request.GET.get('category')
         # username = request.GET.get('username')
-
         username = request.user.username
+        print(username)
         follows = follow.objects.filter(username=username, follow_city=city)
-        if city is not None:
-            follows.follow_city = ""
-        if category is not None:
-            follows.follow_category = ""
+        for item in follows:
+            if city is not None:
+                item.follow_city = None
+        # follows.save()
+        follow2 = follow.objects.filter(username=username, follow_category=category)
+        for item in follow2:
+            if category is not None:
+                item.follow_category = None
+        # follow2.save()
         # follows.delete()
         response['list'] = json.loads(serializers.serialize("json", follows))
         response['msg'] = '0'
@@ -393,3 +410,60 @@ def delete_follow(request):
 #         response['error_num'] = 1
 #         response['error'] = str(e)
 #     return JsonResponse(response)
+
+
+# 获取未更新的信息条数
+@require_http_methods(["GET"])
+def getNumOfUnupdate(request):
+    # request.session.get("info").get("username")
+    username = 'qqt'
+    update_time = follow.objects.filter(username=username).first().last_time
+    # print(update_time)
+    followArray = follow.objects.filter(username=username).all()
+    followCityArray = []
+    followCategoryArray = []
+    for followItem in followArray:
+        if not followItem.follow_city == '':
+            followCityArray.append(followItem.follow_city)
+        else:
+            followCategoryArray.append(followItem.follow_category)
+    dataCount = Data.objects.filter(Q(create_time__gte=update_time),Q(city__in=followCityArray) | Q(category__in=followCategoryArray)).count()
+    # print(dataCount)
+    return JsonResponse({"status":True,"numOfMessage": dataCount})
+
+
+# 获取未更新的data数据并刷新更新时间
+@require_http_methods(["GET"])
+def getUnUpdateInfo(request):
+    username = 'qqt'
+    update_time = follow.objects.filter(username=username).first().last_time
+    # print(update_time)
+    followArray = follow.objects.filter(username=username).all()
+    followCityArray = []
+    followCategoryArray = []
+    for followItem in followArray:
+        if not followItem.follow_city == '':
+            followCityArray.append(followItem.follow_city)
+        else:
+            followCategoryArray.append(followItem.follow_category)
+    dataArray = Data.objects.filter(Q(create_time__gte=update_time),Q(city__in=followCityArray) | Q(category__in=followCategoryArray)).order_by('-create_time')
+    print(type(dataArray))
+    returnDataArray = serializers.serialize("json",dataArray,fields=('title','url','city','category','create_time'))
+    follow.objects.filter(username=username).update(last_time = time.strftime('%Y-%m-%d', time.localtime(time.time())))
+    return JsonResponse({'status':True,'dataArray':returnDataArray})
+
+
+@require_http_methods(["GET"])
+def test(request):
+    return render(request, 'test.html')
+
+
+def newData(request):
+    QuerySet = {'title':'安徽省人民政府关于印发安徽省政府投资管理办法的通知','city':'合肥','url':'https://www.ah.gov.cn/public/1681/554182711.html','category':'疫情'}
+    Data.objects.create(**QuerySet)
+    return JsonResponse({"status": "true"})
+
+
+def SmsTest(request):
+    sendMsm("18390956471")
+    return JsonResponse({"status": True})

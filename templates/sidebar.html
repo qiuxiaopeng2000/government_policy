@@ -1,0 +1,95 @@
+<div class="col-4" style="padding-left:5%">
+
+	<div id="message-reminder" style="max-width: 85%;">
+		<ul class="list-group">
+
+			<a href="{% url 'templatesTest:user' %}" class="list-group-item list-group-item-action">安徽省
+				<span class="badge bg-primary rounded-pill" style="float:right">14</span>
+			</a>
+			<a href="{% url 'templatesTest:user' %}" class="list-group-item list-group-item-action">蚌埠市
+				<span class="badge bg-primary rounded-pill" style="float:right">3</span>
+			</a>
+			<a href="{% url 'templatesTest:user' %}" class="list-group-item list-group-item-action">马鞍山市
+				<span class="badge bg-primary rounded-pill" style="float:right">2</span>
+			</a>
+		</ul>
+	</div>
+
+	<br>
+
+	<div class="card border-primary mb-3" style="max-width: 85%;">
+		<div class="card-header" style="font-weight:bold">
+			推荐关注
+			<a href="#" style="float:right;font-weight:lighter;">more</a>
+		</div>
+		<div class="card-body">
+			<div>
+				<lable for="city" class="form-check-label">安徽省</lable>
+				<input class="btn btn-outline-primary btn-sm btn-city" type="button" id="city0" value="关注">
+			</div>
+			<hr/>
+			<div>
+				<lable for="city" class="form-check-label">芜湖市</lable>
+				<input class="btn btn-outline-primary btn-sm btn-city" type="button" id="city1" value="关注">
+				<hr/>
+			</div>
+			<div>
+				<lable for="city" class="form-check-label">蚌埠市</lable>
+				<input class="btn btn-outline-primary btn-sm btn-city" type="button" id="city2" value="关注">
+				<hr/>
+			</div>
+			<div>
+				<lable for="city" class="form-check-label">六安市</lable>
+				<input class="btn btn-outline-primary btn-sm btn-city" type="button" id="city3" value="关注">
+				<hr/>
+			</div>
+			<div>
+				<lable for="city" class="form-check-label">福建省</lable>
+				<input class="btn btn-outline-primary btn-sm btn-city" type="button" id="city4" value="关注">
+				<hr/>
+			</div>
+			<br>
+			<p style="float:right;color:#808080;margin-bottom:0%;font-size:12px;">点击取消关注</p>
+		</div>
+	</div>
+
+	<div class="accordion" id="newest-policy" style="max-width: 85%;">
+		<div class="accordion-item">
+			<h2 class="accordion-header" id="headingOne">
+				<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+				        aria-expanded="false" aria-controls="collapseOne">
+					最新政策1
+				</button>
+			</h2>
+			<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+			     data-bs-parent="#accordionExample" style="">
+				<div class="accordion-body">
+					<strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin
+					adds the appropriate classes that we use to style each element. These classes control the overall appearance,
+					as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or
+					overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>,
+					though the transition does limit overflow.
+				</div>
+			</div>
+		</div>
+		<div class="accordion-item">
+			<h2 class="accordion-header" id="headingTwo">
+				<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+				        aria-expanded="false" aria-controls="collapseTwo">
+					最新政策2
+				</button>
+			</h2>
+			<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+			     data-bs-parent="#accordionExample" style="">
+				<div class="accordion-body">
+					<strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin
+					adds the appropriate classes that we use to style each element. These classes control the overall appearance,
+					as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or
+					overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>,
+					though the transition does limit overflow.
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>

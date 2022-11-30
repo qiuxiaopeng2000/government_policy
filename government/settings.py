@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     "phonenumber_field",
+    'intersection',
 ]
 
 # # 登录成功后重定向地址
@@ -61,8 +63,7 @@ ROOT_URLCONF = 'government.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -70,12 +71,15 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
+
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'government.wsgi.application'
+ASGI_APPLICATION = 'government.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -126,6 +130,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 # 配置浏览器访问文件的地址：http://127.0.0.1:8000/media/...
 MEDIA_URL = '/media/'
@@ -136,3 +141,35 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 邮箱
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = '903497072@qq.com'
+EMAIL_HOST_PASSWORD = 'gtxghmwtqbwzbffe'
+EMAIL_USE_TLS = False
+
+# 短信的配置信息
+MSM_SECRET_ID = 'AKIDHOFqACzVJq77qITN0MQDjywe7IDsGNDm'
+MSM_SECRET_KEY = 'KN8cplQovnOima7NM5WgY9TWIn1yEExP'
+SmsSdkAppId = "1400667031"
+SignName = "qqt编程学习公众号"
+TemplateId = "1620674"
+
+# celery相关配置
+# Celery相关配置
+# 配置Celery时区，默认时UTC
+
+# Celery配置redis作为broker消息代理
+broker_url = 'redis://127.0.0.1:6379/0'
+
+# Celery结果存储到Redis
+result_backend = 'redis://127.0.0.1:6379/0'
+
+# 可接受的内容格式
+accept_content = ["json"]
+# 任务序列化数据格式
+task_serializer = "json"
+# 结果序列化数据格式
+result_serializer = "json"

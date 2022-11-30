@@ -18,4 +18,10 @@ urlpatterns = [
     url("show_user_info$", views.show_user_info, name='show_user_info'),
     url("user_change_phone$", views.user_change_phone, name='user_change_phone'),
     url("show_policy_detail$", views.show_policy_detail, name='show_policy_detail'),
+
+    url("get_Num_Of_Unupdate$", views.getNumOfUnupdate, name='get_Num_Of_Unupdate'),
+    url("getUnUpdateInfo", views.getUnUpdateInfo, name='getUnUpdateInfo'),
+    url("test", views.test),
+    url("newData", views.newData),
+    url("smsTest", views.SmsTest)
 ]

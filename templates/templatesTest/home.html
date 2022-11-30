@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+	主页
+{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+	{% include 'search-box.html' %}
+{#    <input type="button" id="test" value="测试">#}
+  <div class="row div-content">
+	  {% include 'policy-tablist.html' %}
+	  {% include 'sidebar.html' %}
+  </div>
+    {{ user_name|json_script:"user-name" }}
+</div>
+
+{% endblock content %}
+
+{% block js %}
+
+    <script type="text/javascript">
+        const userName = JSON.parse(document.getElementById('user-name').textContent);
+        var count = 0
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chat/'
+            + userName
+            + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+
+            //alert(e.data)
+            var count = $("#count").text();
+            count = Number(count) + 1;
+            $("#count").text(count);
+            const data = JSON.parse(e.data)
+            $('#bottom').before('<div class="accordion-item"> <h2 class="accordion-header" id="headingOne"> <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'
+            +count + '"aria-expanded="false" aria-controls="collapseOne">'+
+                                data.city + '</button> </h2> <a href="' + data.url + '" id="collapse' + count + '" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style=""> <div class="accordion-body">'
+                                + data.title+
+                                '</div> </a> </div>')
+            count++;
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+      //  $('#test').click(function () {
+                //alert("?????")
+      //          var count = $("#count").text();
+      //          count = Number(count) + 1;
+      //          $("#count").text(count);
+      //  })
+
+
+    </script>
+{% endblock %}

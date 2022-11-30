@@ -42,9 +42,9 @@ http://127.0.0.1:8000/api/user_logout
 > 
 
 ### 5. 修改密码
-http://127.0.0.1:8000/api/user_change_password?old_password=<password>&new_password<password>
+http://127.0.0.1:8000/api/user_change_password?password<password>
 > example:
-> http://127.0.0.1:8000/api/user_change_password?old_password=123&new_password=1234567890
+> http://127.0.0.1:8000/api/user_change_password?password=1234567890
 > 
 
 

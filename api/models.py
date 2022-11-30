@@ -25,6 +25,7 @@ class user_info_data(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     portrait = models.ImageField(upload_to='portrait', blank=True)
     phone = PhoneNumberField(unique=True, null=True, blank=True)
+    # username =
 
     class Meta:
         managed = True
