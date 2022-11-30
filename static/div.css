@@ -1,0 +1,58 @@
+.div-form-2{
+  padding-left:15%;
+  padding-right:15%;
+
+}
+
+.div-form-3{
+  padding-left:15%;
+  padding-right:15%;
+
+}
+
+.div-form-group{
+  margin-top:3%;
+}
+
+.div-from-button{
+  float:right;
+  margin-right:3%;
+}
+
+.div-content{
+  margin-top:10%;
+  margin-left:3%;
+  margin-right:3%;
+}
+
+.div-tab-content{
+  margin-top:3%;
+}
+
+.btn-city{
+  margin-top:5%;
+  margin-right:3%;
+}
+
+.label-source{
+  color:#777;
+  font-weight:lighter;
+  font-size:10pt;
+}
+
+ .label-date{
+  color:#777;
+  font-weight:lighter;
+  font-size:10pt;
+}
+
+img.figure{
+  display:block;
+  margin:auto;
+  width:150px;
+  height:150px;
+}
+
+.div-form-check{
+  margin-left:10%;
+}
