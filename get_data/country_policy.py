@@ -6,6 +6,11 @@ import pandas as pd
 import time
 from libs.mysql_util import insert_or_update, select_data
 from lxml import etree
+import django
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "government.settings")
+django.setup()
+from api.models import Data
 from concurrent.futures import ThreadPoolExecutor
 
 
@@ -26,9 +31,11 @@ def get_country(i):
     head = '\n'.join(head.strip())
     body = soup.xpath('/html/body/div[6]/div[3]/table[2]/tbody/tr/td/table[1]/tbody/tr[1]/td/p//text()')
     body = '\n'.join(body.strip())
-    sql = "insert into data(title, url, create_time, city, category, head, body) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (
-    title, url, create_time, city, category, head, body)
-    insert_or_update(sql)
+    data = Data.objects.create(title=title, url=url, create_time=create_time, city=city, category=category, head=head,
+                               body=body)
+    # sql = "insert into data(title, url, create_time, city, category, head, body) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (
+    # title, url, create_time, city, category, head, body)
+    # insert_or_update(sql)
     # time.sleep(2)
 
 

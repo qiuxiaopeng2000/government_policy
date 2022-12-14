@@ -2,61 +2,71 @@
 {% load static %}
 
 {% block title %}
-	注册
+    注册
 {% endblock title %}
 
-{% block content %}\
-<div class="container-fluid">
-	<div class="row div-content">
-		<div class="col-2"></div>
-		<div class="col-8 div-form-2">
-			<form>
-				<div class="div-form-group">
-                    <label for="username" class="form-label mt-4">用户名</label>
-					<input type="text" class="form-control" id="username" placeholder="请输入您的用户名">
+{% block content %}
+    <div class="background-gradient">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-2"></div>
+                <div class="col-8 div-binary">
+                    <div class="form-left">
+                        <video class="video-left" autoplay="autoplay" muted="muted" loop="loop">
+                            <source type="video/mp4" src="/media/v3.mp4">
+                        </video>
+                    </div>
+                    <div class="form-right">
+                        <form style="width:60%">
+                            <div id="div-login-username" class="div-form-group">
+                                <label for="username" class="form-label mt-4">用户名</label>
+                                <input type="text" class="form-control" id="username" placeholder="请输入您的用户名">
+                            </div>
+                            <div id="div-login-password" class="div-form-group">
+                                <label for="password" class="form-label mt-4">密 码</label>
+                                <input type="password" class="form-control" id="password" placeholder="请输入您的密码">
+                                <div id="signal" class="invalid-feedback">注册失败。</div>
+                            </div>
+                            <div class="div-form-group div-from-button">
+                                <input id="submitButton" class="btn btn-primary" type="button" value="注册">
+                            </div>
+                        </form>
+                    </div>
                 </div>
-				<div class="div-form-group" id="div-login-password">
-					<label for="password" class="form-label mt-4">密码</label>
-					<input type="password" class="form-control" id="password" placeholder="请输入您的密码">
-					<div class="invalid-feedback" id="signal"></div>
-				</div>
-				<div class="div-form-group div-from-button">
-					<input class="btn btn-primary" type="button" id="LoginSumbit" value="注册">
-				</div>
-			</form>
-		</div>
-
-		<div class="col-2"></div>
-	</div>
-</div>
+                <div class="col-2"></div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
 
 {% block js %}
-<script>
+    <script>
 
-	$('#LoginSumbit').click(function(){
-		$.ajax({
-			url:'http://127.0.0.1:8000/api/user_register',
-			method : 'get',
-			data : {'username':$('#username').val(), 'password': $('#password').val()},
-			success : function(res){
-                alert(res.msg)
-                alert(res.error)
-				if(res.msg == '0' || res.msg == '-1'){
-                    alert("！！！！！！！！！！！！！！！！")
-					location.href = '/intersection/home';
-				}else if(res.msg == '1'){
-					document.getElementById('div-login-password').class = 'form-group has-danger';
-					document.getElementsByName('password').class = 'form-control is-invalid';
-					$('#signal').html(res.signal);
-				}else if(res.msg == '-1'){
-					document.getElementById('div-login-password').class = 'form-group has-danger';
-					document.getElementsByName('password').class = 'form-control is-invalid';
-					$('#signal').html(res.signal);
-				}
-			},
-		});
-	});
+        $(document).ready(function () {
+            $('#logoutButton').hide();
+            $('#homeButton').removeClass("active");
+            $('#loginButton').removeClass("active");
+            $('#registerButton').addClass("active");
+        });
 
-</script>
+        $('#submitButton').click(function () {
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/user_register',
+                method: 'get',
+                data: {'username': $('#username').val(), 'password': $('#password').val()},
+                success: function (res) {
+                    if (res.msg == '0') {
+                        location.href = '/intersection/home';
+                    } else {
+                        $('#div-login-password').addClass("has-danger");
+                        $('#password').addClass("is-invalid");
+                        $('#div-login-password').refresh();
+                        $('#password').refresh();
+                        $('#password').focus();
+                    }
+                },
+            });
+        });
+
+    </script>
 {% endblock %}

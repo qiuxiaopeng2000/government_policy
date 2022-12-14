@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-transparent">
+	<div class="container-fluid">
+		<img src="/media/navbar6.ico" style="height:60px">
+
+		<div class="collapse navbar-collapse" id="navbarColor01">
+			<ul class="navbar-nav me-auto">
+				<li class="nav-item">
+					<a id="homeButton" class="nav-link active" href="{% url 'intersection:home' %}">主 页</a>
+				</li>
+				<li class="nav-item">
+					<a id="loginButton" class="nav-link" href="{% url 'intersection:login' %}">登 陆</a>
+				</li>
+				<li class="nav-item">
+					<a id="registerButton" class="nav-link" href="{% url 'intersection:register' %}">注 册</a>
+				</li>
+				<li class="nav-item">
+                    <form>
+                        <a id="logoutButton" class="nav-link" type="button">登 出</a>
+                    </form>
+				</li>
+			</ul>
+			<ul class="navbar-nav ms-md-auto">
+				<li class="nav-item">
+					<a id="loginName" target="_blank" rel="noopener" class="nav-link" href="{% url 'intersection:user_data_info' %}">Username</a>
+				</li>
+				<li class="nav-item">
+					<a target="_blank" rel="noopener" class="nav-link" href="#">
+                        <i class="bi bi-github"></i> GitHub</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>

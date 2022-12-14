@@ -22,12 +22,11 @@ MEDIA_ADDR = 'http://localhost:8000/media/'
 
 
 class user_info_data(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,  related_name='user_info')
     portrait = models.ImageField(upload_to='portrait', blank=True)
     phone = PhoneNumberField(unique=True, null=True, blank=True)
-    # identifier = models.CharField(max_length=40, unique=True)
-    # USERNAME_FIELD = 'identifier'
-    # username =
+    last_time = models.DateField(blank=True, null=True)
+    username = models.CharField(max_length=50, blank=True)
 
     class Meta:
         managed = True
@@ -40,13 +39,26 @@ class user_info_data(models.Model):
     def get_phone(self):
         return str(self.phone)
 
+    def __str__(self):
+        return 'user {}'.format(self.user.username)
+
+
+# @receiver(post_save, sender=User)
+# def create_user_profile(sender, instance, created, **kwargs):
+#     if created:
+#         user_info_data.objects.create(user=instance)
+#
+#
+# @receiver(post_save, sender=User)
+# def save_user_profile(sender, instance, **kwargs):
+#     instance.user_info_data.save()
+
 
 class follow(models.Model):
     username = models.CharField(max_length=10, blank=True)
-    follow_city = models.CharField(max_length=10, blank=True)
-    follow_category = models.CharField(max_length=10, blank=True)
+    follow_city = models.CharField(max_length=10, blank=True, null=True)
+    follow_category = models.CharField(max_length=10, blank=True, null=True)
     last_time = models.DateField(blank=True, null=True)
-
 
 
 class GovUrl(models.Model):

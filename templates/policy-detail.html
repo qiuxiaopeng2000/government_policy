@@ -1,12 +1,12 @@
 <div class="col-8">
 	<div class="div-policy-title">
-		<h2>关于中国科学技术大学（高新校区）解封的通知</h2>
-		<lable class="label-source">来自--中国科学技术大学（高新校区）<br>2022-11-27</lable>
+		<h2>{{ policy.title }}</h2>
+		<lable class="label-source">来自--{{ policy.city }}<br>{{ policy.create_time }}</lable>
 		<hr>
 	</div>
-	<div class="div-policy-content">
-		<p>解封啦啦啦啦啦啦啦啦啦</p>
-	</div>
+{#	<div class="div-policy-content">#}
+{#		<p>解封啦啦啦啦啦啦啦啦啦</p>#}
+{#	</div>#}
     <div>
         {{ policy.body }}
     </div>

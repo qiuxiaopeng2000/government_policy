@@ -1,127 +1,87 @@
 {% load static %}
 <div class="col-4" style="padding-left:5%">
 
-	<div id="message-reminder" style="max-width: 85%;">
-		<ul class="list-group">
+    {#	<div id="message-reminder" class="div-sidebar">#}
+    {#		<ul class="list-group ">#}
+    {#            <a href="#" class="list-group-item list-group-item-action border-primary mb-3">关注更新#}
+    {#                <span id="count" class="badge bg-primary rounded-pill" style="float:right">14</span>#}
+    {#            </a>#}
+    {#		</ul>#}
+    {#	</div>#}
+    <div id="message-reminder" class="div-sidebar">
+        <ul class="list-group ">
+            <a @click="getUnUpdatePolicy($event)" class="list-group-item list-group-item-action border-primary mb-3">关注更新
+                <span id="count" class="badge bg-primary rounded-pill" style="float:right">
+                  {% verbatim %}
+                       {{ unReadNum }}
+                   {% endverbatim %}
+               </span>
+            </a>
+        </ul>
+    </div>
+    <div id="bottom"></div>
+    <div class="accordion div-sidebar" id="accordionExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                        aria-expanded="true" aria-controls="collapseOne">
+                    推荐城市
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                 data-bs-parent="#accordionExample" style="">
+                <div class="accordion-body">
+					<span>
+						<lable for="city0" class="form-check-label">安徽省</lable>
+						<span style="float:right">
+							<input class="btn btn-outline-primary btn-sm btn-city" type="button" id="city0"
+                                   value="关注">
+						</span>
+					</span>
+                    <hr/>
+                    <span>
+						<lable for="city1" class="form-check-label">芜湖市</lable>
+						<span style="float:right">
+							<input class="btn btn-outline-primary btn-sm btn-city" type="button" id="city1"
+                                   value="关注">
+						</span>
+					</span>
+                    <hr/>
+                    <span>
+						<lable for="city2" class="form-check-label">蚌埠市</lable>
+						<span style="float:right">
+							<input class="btn btn-outline-primary btn-sm btn-city" type="button" id="city2"
+                                   value="关注">
+						</span>
+					</span>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTwo"
+                        aria-expanded="false" aria-controls="collapseTwo">
+                    推荐类别
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                 data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    {% for item in category_list %}
+                        <span>
+						<lable for="category0" class="form-check-label">{{ item }}</lable>
+						<span style="float:right">
+							<input class="btn btn-outline-primary btn-sm btn-category" type="button" id="category0"
+                                   value="关注">
+						</span>
+					</span>
+                        <hr/>
+                    {% endfor %}
 
-			<a href="#" class="list-group-item list-group-item-action">安徽省
-				<span id="count" class="badge bg-primary rounded-pill" style="float:right">14</span>
-			</a>
-			<a href="" class="list-group-item list-group-item-action">蚌埠市
-				<span class="badge bg-primary rounded-pill" style="float:right">3</span>
-			</a>
-			<a href="" class="list-group-item list-group-item-action">马鞍山市
-				<span class="badge bg-primary rounded-pill" style="float:right">2</span>
-			</a>
-		</ul>
-	</div>
-
-	<br>
-
-	<div class="card border-primary mb-3" style="max-width: 85%;">
-		<div class="card-header" style="font-weight:bold">
-			推荐关注
-			<a href="#" style="float:right;font-weight:lighter;">more</a>
-		</div>
-		<div class="card-body">
-			<div>
-				<lable for="city" class="form-check-label">安徽省</lable>
-				<input class="btn btn-outline-primary btn-sm btn-city" type="button" id="city0" value="关注">
-			</div>
-			<hr/>
-			<div>
-				<lable for="city" class="form-check-label">芜湖市</lable>
-				<input class="btn btn-outline-primary btn-sm btn-city" type="button" id="city1" value="关注">
-				<hr/>
-			</div>
-			<div>
-				<lable for="city" class="form-check-label">蚌埠市</lable>
-				<input class="btn btn-outline-primary btn-sm btn-city" type="button" id="city2" value="关注">
-				<hr/>
-			</div>
-			<div>
-				<lable for="city" class="form-check-label">六安市</lable>
-				<input class="btn btn-outline-primary btn-sm btn-city" type="button" id="city3" value="关注">
-				<hr/>
-			</div>
-			<div>
-				<lable for="city" class="form-check-label">福建省</lable>
-				<input class="btn btn-outline-primary btn-sm btn-city" type="button" id="city4" value="关注">
-				<hr/>
-			</div>
-			<br>
-			<p style="float:right;color:#808080;margin-bottom:0%;font-size:12px;">点击取消关注</p>
-		</div>
-	</div>
-
-	<div class="accordion" id="newest-policy" style="max-width: 85%;">
-{#		<div class="accordion-item">#}
-{#			<h2 class="accordion-header" id="headingOne">#}
-{#				<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"#}
-{#				        aria-expanded="false" aria-controls="collapseOne">#}
-{#					最新政策1#}
-{#				</button>#}
-{#			</h2>#}
-{#			<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"#}
-{#			     data-bs-parent="#accordionExample" style="">#}
-{#				<div class="accordion-body">#}
-{#					<strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin#}
-{#					adds the appropriate classes that we use to style each element. These classes control the overall appearance,#}
-{#					as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or#}
-{#					overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>,#}
-{#					though the transition does limit overflow.#}
-{#				</div>#}
-{#			</div>#}
-{#		</div>#}
-{#		<div class="accordion-item">#}
-{#			<h2 class="accordion-header" id="headingTwo">#}
-{#				<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"#}
-{#				        aria-expanded="false" aria-controls="collapseTwo">#}
-{#					最新政策2#}
-{#				</button>#}
-{#			</h2>#}
-{#			<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"#}
-{#			     data-bs-parent="#accordionExample" style="">#}
-{#				<div class="accordion-body">#}
-{#					<strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin#}
-{#					adds the appropriate classes that we use to style each element. These classes control the overall appearance,#}
-{#					as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or#}
-{#					overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>,#}
-{#					though the transition does limit overflow.#}
-{#				</div>#}
-{#			</div>#}
-{#		</div>#}
-        <div id="bottom"></div>
-
-	</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<script src="{% static 'jquery/jquery-3.3.1.js' %}"></script>
-{% block js %}
 
-    <script type="text/javascript">
-        $(function () {
-            $('.btn-city').click(function () {
-                alert($(this).prev().text())
-                var focusCityName = $(this).prev().text()
-                $.ajax({
-                    url: 'http://127.0.0.1:8000/api/follow_city',
-                    method: 'get',
-                    data: {'city':focusCityName},
-                    success: function (res) {
-                        if (res.msg == '0') {
-                            alert(res.signal)
-                        } else if (res.msg == '1') {
-                            document.getElementById('div-login-password').class = 'form-group has-danger';
-                            document.getElementsByName('password').class = 'form-control is-invalid';
-                            $('#signal').html(res.signal);
-                        } else if (res.msg == '-1') {
-                            document.getElementById('div-login-password').class = 'form-group has-danger';
-                            document.getElementsByName('password').class = 'form-control is-invalid';
-                            $('#signal').html(res.signal);
-                        }
-                    }
-                })
-            })
-        })
-    </script>
-{% endblock %}

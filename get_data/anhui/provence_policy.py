@@ -8,6 +8,11 @@ import os
 sys.path.append(os.path.abspath(os.path.join(__file__, "..", "..", "..")))
 from libs.mysql_util import insert_or_update, select_data
 from lxml import etree
+import django
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "government.settings")
+django.setup()
+from api.models import Data
 
 
 header = {
@@ -30,11 +35,13 @@ def get_anhui(i):
     head = '\n'.join(head)
     body = soup.xpath('/html/body/div[1]/div[3]/div[2]/div[1]/div[2]/div[1]//text()')
     body = '\n'.join(body)
-    sql = "insert into data(title, url, create_time, city, category, head, body) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (title, url, create_time, city, category, head, body)
-    insert_or_update(sql)
+    data = Data.objects.create(title=title, url=url, create_time=create_time, city=city, category=category, head=head, body=body)
+    # sql = "insert into data(title, url, create_time, city, category, head, body) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (title, url, create_time, city, category, head, body)
+    # insert_or_update(sql)
 
 
-sql_select = "select * from policy_url where city = '安徽'"
+# sql_select = "select * from policy_url where city = '安徽'"
+sql_select = "select * from policy_url where policy_url.city = '安徽' and policy_url.create_time > (select create_time from data where city='安徽' order by create_time desc limit 1)"
 gov_file = select_data(sql_select)
 gov_file = pd.DataFrame(gov_file)
 gov_file.columns = ['id', 'policy_url', 'policy_title', 'city', 'category', 'create_time']

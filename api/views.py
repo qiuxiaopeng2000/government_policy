@@ -1,20 +1,20 @@
 import json
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
-from api.models import Data, user_info_data, PolicyUrl
+from api.models import Data, user_info_data, PolicyUrl, follow
 from django.core import serializers
 from django.http import JsonResponse
 from get_data.main import *
 from .forms import follow_form, user_info_form, user_login_form, user_change_email_form
-from .models import follow
+# from .models import follow, user_info_data
 # from rest_framework.authtoken.views import APIView, AuthTokenSerializer
 # from rest_framework.authtoken.models import Token
 from .utils.MsmService import sendMsm
+import datetime
 
 
 # @require_http_methods(["GET"])
@@ -39,7 +39,7 @@ def show_policy(request):
         city = request.GET.get('city')
         category = request.GET.get('category')
         #print("12321213" + category)
-        policys = Data.objects.filter(Q(city=city) | Q(category=category))
+        policys = Data.objects.filter(Q(city=city) | Q(category=category)).order_by('-create_time')
         #print(len(policys))
         #response['list'] = json.loads(serializers.serialize("json", policys))
         List = []
@@ -52,7 +52,38 @@ def show_policy(request):
             policyData['category'] = policy.category
             policyData['create_time'] = policy.create_time
             List.append(policyData)
+        lens = len(List)
         response['list'] = List
+        response['count'] = lens
+        response['msg'] = 'success'
+        response['error_num'] = 0
+    except Exception as e:
+        response['msg'] = str(e)
+        response['error_num'] = 1
+    return JsonResponse(response)
+
+
+@require_http_methods(["GET"])
+def show_all_policy(request):
+    response = {}
+    try:
+        policys = Data.objects.all().order_by('-create_time')
+        #print(len(policys))
+        #response['list'] = json.loads(serializers.serialize("json", policys))
+        List = []
+        for policy in policys:
+            policyData = {}
+            policyData['title'] = policy.title
+            policyData['city'] = policy.city
+            policyData['url'] = policy.url
+            policyData['id'] = policy.id
+            policyData['category'] = policy.category
+            policyData['create_time'] = policy.create_time
+            List.append(policyData)
+        lens = len(List)
+        # print('lens: ' + str(lens))
+        response['list'] = List
+        response['count'] = lens
         response['msg'] = 'success'
         response['error_num'] = 0
     except Exception as e:
@@ -106,6 +137,9 @@ def user_register(request):
         username = request.GET.get('username')
         password = request.GET.get('password')
         email = request.GET.get('email')
+        # email = '2621099562@qq.com'
+        # if email is None:
+        #     email = '2621099562@qq.com'
         if User.objects.filter(username=username).exists():
             response['signal'] = '用户名已被注册'
             response['msg'] = '3'
@@ -114,17 +148,20 @@ def user_register(request):
             # new_user_info_form = user_info_form()
             # new_user_info_data = new_user_info_form.save(commit=False)
             # new_user_info_data.user = user
+            # user = User.objects.get(id=user.id)
             print('?????')
             request.session["info"] = {'username': username}
+            print('------')
             if user_info_data.objects.filter(user_id=user.id).exists():
                 get_user_info = user_info_data.objects.get(user_id=user.id)
             else:
-                get_user_info = user_info_data.objects.create(user=user)
+                get_user_info = user_info_data.objects.create(user=user, last_time=datetime.datetime.now())
+                # get_user_info.last_time = datetime.datetime.now()
             # new_user_info_data = user_info_data.objects.create(user=user)
             print('+++++')
             # new_user_info_data.save()
             # token, created = Token.objects.get_or_create(user=user)
-            #login(request, user)
+            # login(request, user)
             response['msg'] = '0'
             response['error_num'] = 0
             response['signal'] = '注册成功'
@@ -385,14 +422,42 @@ def follow_city(request):
     response = {}
     try:
         city = request.GET.get('city')
+        if request.session.get("info") is None:
+            return JsonResponse({'signal': '尚未登陆', 'msg': 0},)
         username = request.session.get('info').get('username')
-        print("1232132132" + username)
+        # print("1232132132" + username)
         follow_other = follow_form().save(commit=False)
         follow_other.follow_city = city
         follow_other.username = username
-        print(follow_other.username)
+        # print(follow_other.username)
         follow_other.last_time = time.strftime('%Y-%m-%d', time.localtime(time.time()))
-        print("ejhrehrer")
+        # print("ejhrehrer")
+        follow_other.save()
+        print("12345")
+        response['msg'] = '0'
+        response['signal'] = '关注成功！'
+    except Exception as e:
+        response['msg'] = '-1'
+        response['error_num'] = 1
+        response['error'] = str(e)
+    return JsonResponse(response)
+
+
+@require_http_methods(["GET"])
+def follow_category(request):
+    response = {}
+    try:
+        category = request.GET.get('category')
+        if request.session.get("info") is None:
+            return JsonResponse({'signal': '尚未登陆', 'msg': 0},)
+        username = request.session.get('info').get('username')
+        # print("1232132132" + username)
+        follow_other = follow_form().save(commit=False)
+        follow_other.follow_category = category
+        follow_other.username = username
+        # print(follow_other.username)
+        follow_other.last_time = time.strftime('%Y-%m-%d', time.localtime(time.time()))
+        # print("ejhrehrer")
         follow_other.save()
         print("12345")
         response['msg'] = '0'
@@ -409,7 +474,7 @@ def policy(request):
     # policy_pk = str(policy_pk)
     policy = Data.objects.filter(id=policy_pk).first()
     return render(request, 'templatesTest/policy.html',
-                  {'policy':policy})
+                  {'policy': policy})
 
 
 @require_http_methods(["GET"])
@@ -437,18 +502,27 @@ def delete_follow(request):
         city = request.GET.get('city')
         category = request.GET.get('category')
         # username = request.GET.get('username')
-        username = request.user.username
-        print(username)
-        follows = follow.objects.filter(username=username, follow_city=city)
-        for item in follows:
-            if city is not None:
-                item.follow_city = None
+        # username = request.user.username
+        username = request.session.get('info').get('username')
+        # print(username)
+        if city is not None:
+            follows = follow.objects.filter(username=username, follow_city=city)
+            follows.delete()
+        # for item in follows:
+        #     if city is not None:
+        #
+                # item.objects.update(follow_city='')
+                # print('item.follow_city ' + str(item.follow_city))
         # follows.save()
-        follow2 = follow.objects.filter(username=username, follow_category=category)
-        for item in follow2:
-            if category is not None:
-                item.follow_category = None
+        if category is not None:
+            follow2 = follow.objects.filter(username=username, follow_category=category)
+            follow2.delete()
+        # for item in follow2:
+        #     if category is not None:
+        #         # item.objects.update(follow_category='')
+
         # follow2.save()
+        # follows.save()
         # follows.delete()
         response['list'] = json.loads(serializers.serialize("json", follows))
         response['msg'] = '0'
@@ -480,45 +554,6 @@ def delete_follow(request):
 
 
 # 获取未更新的信息条数
-@require_http_methods(["GET"])
-def getNumOfUnupdate(request):
-    # request.session.get("info").get("username")
-    username = 'qqt'
-    update_time = follow.objects.filter(username=username).first().last_time
-    # print(update_time)
-    followArray = follow.objects.filter(username=username).all()
-    followCityArray = []
-    followCategoryArray = []
-    for followItem in followArray:
-        if not followItem.follow_city == '':
-            followCityArray.append(followItem.follow_city)
-        else:
-            followCategoryArray.append(followItem.follow_category)
-    dataCount = Data.objects.filter(Q(create_time__gte=update_time),Q(city__in=followCityArray) | Q(category__in=followCategoryArray)).count()
-    # print(dataCount)
-    return JsonResponse({"status":True,"numOfMessage": dataCount})
-
-
-# 获取未更新的data数据并刷新更新时间
-@require_http_methods(["GET"])
-def getUnUpdateInfo(request):
-    username = 'qqt'
-    update_time = follow.objects.filter(username=username).first().last_time
-    # print(update_time)
-    followArray = follow.objects.filter(username=username).all()
-    followCityArray = []
-    followCategoryArray = []
-    for followItem in followArray:
-        if not followItem.follow_city == '':
-            followCityArray.append(followItem.follow_city)
-        else:
-            followCategoryArray.append(followItem.follow_category)
-    dataArray = Data.objects.filter(Q(create_time__gte=update_time),Q(city__in=followCityArray) | Q(category__in=followCategoryArray)).order_by('-create_time')
-    print(type(dataArray))
-    returnDataArray = serializers.serialize("json",dataArray,fields=('title','url','city','category','create_time'))
-    follow.objects.filter(username=username).update(last_time = time.strftime('%Y-%m-%d', time.localtime(time.time())))
-    return JsonResponse({'status':True,'dataArray':returnDataArray})
-
 
 @require_http_methods(["GET"])
 def test(request):
@@ -529,6 +564,80 @@ def newData(request):
     QuerySet = {'title':'安徽省人民政府关于印发安徽省政府投资管理办法的通知','city':'安徽省','url':'https://www.ah.gov.cn/public/1681/554182711.html','category':'疫情'}
     Data.objects.create(**QuerySet)
     return JsonResponse({"status": "true"})
+
+
+@require_http_methods(["GET"])
+def getNumOfUnupdate(request):
+    username = request.session.get("info").get("username")
+    user = User.objects.filter(username=username).first()
+    update_time = user_info_data.objects.filter(user=user).first().last_time
+    # print(update_time)
+    followArray = follow.objects.filter(username=username).all()
+    followCityArray = []
+    followCategoryArray = []
+    for followItem in followArray:
+        if followItem.follow_city is not None:
+            followCityArray.append(followItem.follow_city)
+        else:
+            followCategoryArray.append(followItem.follow_category)
+    print("followCity" + str(followCityArray))
+    print("followCategory" + str(followCategoryArray))
+    dataCount = Data.objects.filter(Q(create_time__gte=update_time),
+                                    Q(city__in=followCityArray) | Q(category__in=followCategoryArray)).count()
+    # print(dataCount)
+    return JsonResponse({"status": True, "numOfMessage": dataCount})
+
+
+# 获取未更新的data数据并刷新更新时间
+@require_http_methods(["GET"])
+def getUnUpdateInfo(request):
+    username = request.session.get("info").get("username")
+    print("+++++++" + username)
+    user = User.objects.filter(username=username).first()
+    update_time = user_info_data.objects.filter(user=user).first().last_time
+    # update_time = follow.objects.filter(username=username).first().last_time
+    # print(update_time)
+    followArray = follow.objects.filter(username=username).all()
+    print("followArray" + str(followArray))
+    followCityArray = []
+    followCategoryArray = []
+    for followItem in followArray:
+        if followItem.follow_city is not None:
+            followCityArray.append(followItem.follow_city)
+        else:
+            followCategoryArray.append(followItem.follow_category)
+    print("category" + str(followCategoryArray))
+    dataArray = Data.objects.filter(Q(create_time__gte=update_time),
+                                    Q(city__in=followCityArray) | Q(category__in=followCategoryArray)).order_by(
+        '-create_time')
+    dataArray1 = Data.objects.filter(Q(create_time__lt=update_time),
+                                     Q(city__in=followCityArray) | Q(category__in=followCategoryArray)).order_by(
+        '-create_time')
+    for item in dataArray1:
+        print(item.category)
+    List = []
+    ListRead = []
+    for policy in dataArray:
+        policyData = {}
+        policyData['title'] = policy.title
+        policyData['city'] = policy.city
+        policyData['url'] = policy.url
+        policyData['id'] = policy.id
+        policyData['category'] = policy.category
+        policyData['create_time'] = policy.create_time
+        List.append(policyData)
+    for policy in dataArray1:
+        policyData = {}
+        policyData['title'] = policy.title
+        policyData['city'] = policy.city
+        policyData['url'] = policy.url
+        policyData['id'] = policy.id
+        policyData['category'] = policy.category
+        policyData['create_time'] = policy.create_time
+        ListRead.append(policyData)
+    # returnDataArray = serializers.serialize("json",dataArray,fields=('title','url','city','category','create_time'))
+    user_info_data.objects.filter(user=user).update(last_time=time.strftime('%Y-%m-%d', time.localtime(time.time())))
+    return JsonResponse({'status': True, 'dataArray': List, 'dataHaveRead': ListRead})
 
 
 def SmsTest(request):

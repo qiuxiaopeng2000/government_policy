@@ -10,26 +10,24 @@
     <title>{% block title %}{% endblock title %}</title>
     <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap-table.css">
-    <link rel="stylesheet" type="text/css" href="/static/div.css">
+    <link rel="stylesheet" type="text/css" href="/static/my.css">
     <link rel="shortcut icon" href="/static/bookmark.ico">
     <link rel="bookmark" href="/static/bookmark.ico">
 </head>
 
 <body>
 <!-- 引入导航栏 -->
-{% include 'head.html' %}
+{% include 'header.html' %}
 <!-- 预留页面位置 -->
 {% block content %}{% endblock content %}
 <!-- 引入注脚 -->
-{% include 'foot.html' %}
+{% include 'footer.html' %}
 
 <script src="/static/jquery/jquery-3.3.1.js"></script>
-<!--script src="{% static 'layer/layer.js' %}"></script-->
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1-lts/dist/umd/popper.min.js"></script>
 <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
 <script src="/static/bootstrap/js/bootstrap-table.js"></script>
-{% block js %}
-{% endblock %}
+{% block js %}{% endblock js %}
 </body>
 
 </html>

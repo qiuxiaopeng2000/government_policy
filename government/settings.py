@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     "phonenumber_field",
     'intersection',
+    'get_data',
 ]
 
 # # 登录成功后重定向地址
@@ -56,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'api.middleware.auth.AuthMiddleware',
 ]
 
 ROOT_URLCONF = 'government.urls'

@@ -14,16 +14,18 @@ from .utils.MsmService import sendMsm
 from .utils.utilsReturnData import follow_users
 from .tasks import send_sms,send_mail
 map = {}
-@receiver(post_save, sender=models.user_info_data)
-def myhandler(sender, instance, **kwargs):
-        #print(map['qqt'])
-        print(type(instance))
-        row_dict = {
-            'username':instance.username,
-            'id':instance.id
-        }
 
-        map['qqt'].send(json.dumps(row_dict))
+
+# @receiver(post_save, sender=models.user_info_data)
+# def myhandler(sender, instance, **kwargs):
+#         #print(map['qqt'])
+#         print(type(instance))
+#         row_dict = {
+#             'username':instance.username,
+#             'id': instance.id
+#         }
+#
+#         map['qqt'].send(json.dumps(row_dict))
 
 @receiver(post_save, sender=models.Data)
 def myhandler(sender, instance, **kwargs):

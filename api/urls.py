@@ -1,9 +1,11 @@
 from django.urls import path
 from . import views
-from django.conf.urls import url
+# from django.conf.urls import url
+from django.urls import re_path as url
 
 urlpatterns = [
     url("show_policy$", views.show_policy, name='show_policy'),
+    url("show_all_policy$", views.show_all_policy, name='show_all_policy'),
     url("update_policy$", views.update_policy, name='update_policy'),
     url("user_register$", views.user_register, name='user_register'),
     url("user_login$", views.user_login, name='user_login'),
@@ -11,6 +13,7 @@ urlpatterns = [
     url("user_delete$", views.user_delete, name='user_delete'),
     # url("follow_city_category", views.follow_city_category, name='follow_city_category'),
     url("follow_city$", views.follow_city, name='follow_city'),
+    url("follow_category$", views.follow_category, name='follow_category'),
     path('policy/', views.policy, name='policy'),
     url("show_follow$", views.show_follow, name='show_follow'),
     url("delete_follow$", views.delete_follow, name='delete_follow'),

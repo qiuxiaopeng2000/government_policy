@@ -1,11 +1,13 @@
 ### 1. 获取某一城市的政策
-http://127.0.0.1:8000/api/show_policy?city=<city_name>
+http://127.0.0.1:8000/api/show_policy?city=<city_name>&category=<category_name>
 
 > example: 查询安徽省政府的政策文件
 > 
 > http://127.0.0.1:8000/api/show_policy?city=安徽
 > 
 
+### 获取全部政策
+> http://127.0.0.1:8000/api/show_all_policy
 
 ### 2. 更新某一城市的政策
 http://127.0.0.1:8000/api/update_policy?city=<city_name>
@@ -103,3 +105,7 @@ http://127.0.0.1:8000/api/show_follow
 http://127.0.0.1:8000/api/delete_follow?city=<city>
 > example:
 > http://127.0.0.1:8000/api/delete_follow?city=安徽&category=疫情防控
+
+
+### 用户、管理员、城市、分类、政策
+![img.png](img.png)
