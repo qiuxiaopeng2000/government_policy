@@ -1,18 +1,399 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
-  用户主页
+    用户主页
 {% endblock title %}
 
 
 {% block content %}
-        {% include 'background-video.html' %}
+    {% include 'background-video.html' %}
 
-<div class="container-fluid">
-	<div class="row div-content">
-		{% include 'user-information.html' %}
-		{% include 'sidebar.html' %}
-	</div>
-</div>
+    <div class="container-fluid">
+        <div class="row div-content" id="app">
+            {% include 'user-information.html' %}
+            {% include 'sidebar.html' %}
+        </div>
+        {{ user_name|json_script:"user-name" }}
+    </div>
 
 {% endblock content %}
+
+{% block js %}
+    <script src="{% static 'vue.js' %}"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                PolicyData: [],
+                categoryList: [],
+                category: '',
+                city: '',
+                unReadNum: 0,
+                //     unReadPolicyArray: [],
+                //   FocusPolicyData: [],
+                FocusReadPolicyData: [],
+                pageNum: 1,  // 共几页=所有数据/每页现实数量
+                pageSize: 10, // 每页显示数量
+                totalPage: [], // 所有分页的数据
+                dataShow: [], // 当前显示的数据
+                currentPage: 0 // 默认当前显示第一页
+            },
+            created() {
+                this.getUnreadNumOfmessage()
+
+            },
+            methods: {
+                getUnreadNumOfmessage: function () {
+                    axios.get("http://127.0.0.1:8000/api/get_Num_Of_Unupdate").then(function (response) {
+                        //alert(response.data.numOfMessage)
+                        vm.unReadNum = response.data.numOfMessage
+                    }, function (err) {
+                    })
+                },
+                getUnUpdatePolicy: function (event) {
+                    axios.get("http://127.0.0.1:8000/api/getUnUpdateInfo").then(function (response) {
+                        alert(response.data.status)
+                        vm.dataShow = response.data.dataArray
+                        console.log(vm.PolicyData)
+                        $("#count").text(0)
+                        //vm.unReadPolicyArray = response.data.dataArray
+                        vm.FocusReadPolicyData = response.data.dataHaveRead
+                        $("#hengxian").show()
+                    }, function (err) {
+                    })
+                },
+                getInitPolicy: function () {
+                    {#alert("hello")#}
+                    axios.get("http://127.0.0.1:8000/api/show_all_policy").then(function (response) {
+                        vm.PolicyData = response.data.list;   /*这里不能使用this.policyData，因为对象已经发生改变*/
+                        {#alert(this.PolicyData.length + 999)#}
+                        {#alert(vm.PolicyData.length)#}
+                        vm.pageNum = Math.ceil(vm.PolicyData.length / vm.pageSize) || 1;//计算有多少页数据，默认为1
+                        {#alert(this.pageNum)#}
+                        // 循环页面
+                        for (let i = 0; i < vm.pageNum; i++) {
+                            // 每一页都是一个数组 形如 [['第一页的数据'],['第二页的数据'],['第三页数据']]
+                            vm.totalPage[i] = vm.PolicyData.slice(vm.pageSize * i, vm.pageSize * (i + 1))
+                        }
+
+                        // 获取到数据后默认显示第一页内容
+                        vm.dataShow = vm.totalPage[vm.currentPage];
+                    }, function (err) {
+                    })
+                },
+                // 下一页
+                nextPage() {
+                    if (this.currentPage === this.pageNum - 1) return;
+                    this.dataShow = this.totalPage[++this.currentPage];
+                },
+                // 上一页
+                prePage() {
+                    if (this.currentPage === 0) return;
+                    this.dataShow = this.totalPage[--this.currentPage];
+                },
+                // 点击页码
+                page(i) {
+                    this.currentPage = i - 1
+                    this.dataShow = this.totalPage[this.currentPage];
+                },
+
+                getPolicy: function (event) {
+                    $.ajax({
+                        url: "http://127.0.0.1:8000/api/show_policy",
+                        method: 'get',
+                        data: {
+                            'category': event.target.innerHTML,
+                            'city': $('#cityInput').val()
+                        },
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.msg == 'success') {
+                                // $('.table_clear').empty()
+                                vm.PolicyData = res.list
+                                vm.pageNum = Math.ceil(vm.PolicyData.length / vm.pageSize) || 1;//计算有多少页数据，默认为1
+                                {#alert(this.pageNum)#}
+                                // 循环页面
+                                for (let i = 0; i < vm.pageNum; i++) {
+                                    // 每一页都是一个数组 形如 [['第一页的数据'],['第二页的数据'],['第三页数据']]
+                                    vm.totalPage[i] = vm.PolicyData.slice(vm.pageSize * i, vm.pageSize * (i + 1))
+                                }
+
+                                // 获取到数据后默认显示第一页内容
+                                vm.dataShow = vm.totalPage[vm.currentPage];
+                            }
+
+                        }
+
+                    })
+                },
+                getCityPolicy: function (event) {
+                    alert($('#cityInput').val())
+                    $.ajax({
+                        url: "http://127.0.0.1:8000/api/show_policy",
+                        method: 'get',
+                        data: {
+                            'city': $('#cityInput').val()
+                        },
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.msg == 'success') {
+                                // $('.table_clear').empty()
+                                vm.PolicyData = res.list
+                                vm.pageNum = Math.ceil(vm.PolicyData.length / vm.pageSize) || 1;//计算有多少页数据，默认为1
+                                {#alert(this.pageNum)#}
+                                // 循环页面
+                                for (let i = 0; i < vm.pageNum; i++) {
+                                    // 每一页都是一个数组 形如 [['第一页的数据'],['第二页的数据'],['第三页数据']]
+                                    vm.totalPage[i] = vm.PolicyData.slice(vm.pageSize * i, vm.pageSize * (i + 1))
+                                }
+
+                                // 获取到数据后默认显示第一页内容
+                                vm.dataShow = vm.totalPage[vm.currentPage];
+                            }
+
+                        }
+
+                    })
+                },
+                getAllPolicy: function (event) {
+                    $.ajax({
+                        url: "http://127.0.0.1:8000/api/show_all_policy",
+                        method: 'get',
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.msg == 'success') {
+                                // $('.table_clear').empty()
+                                vm.PolicyData = res.list
+                                vm.pageNum = Math.ceil(vm.PolicyData.length / vm.pageSize) || 1;//计算有多少页数据，默认为1
+                                {#alert(this.pageNum)#}
+                                // 循环页面
+                                for (let i = 0; i < vm.pageNum; i++) {
+                                    // 每一页都是一个数组 形如 [['第一页的数据'],['第二页的数据'],['第三页数据']]
+                                    vm.totalPage[i] = vm.PolicyData.slice(vm.pageSize * i, vm.pageSize * (i + 1))
+                                }
+
+                                // 获取到数据后默认显示第一页内容
+                                vm.dataShow = vm.totalPage[vm.currentPage];
+                            }
+                        }
+
+                    })
+                },
+
+            },
+        })
+
+   </script>
+
+
+    {#    sidebar#}
+    <script type="text/javascript">
+        const userName = JSON.parse(document.getElementById('user-name').textContent);
+        $(document).ready(function () {
+
+            if (userName != '') {
+                $('#homeButton').addClass("active");
+                $('#loginButton').removeClass("active");
+                $('#registerButton').removeClass("active");
+
+                $('#loginName').text(userName);
+                $('#loginButton').hide();
+                $('#registerButton').hide();
+                $('#logoutButton').show();
+            } else {
+                $('#message-reminder').hide()
+            }
+        })
+        $(function () {
+            $('.btn-city').click(function () {
+
+                alert($(this).parent().prev().text())
+                {#alert($(this).prev().text())#}
+                var focusCityName = $(this).parent().prev().text()
+                var id
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/follow_city',
+                    method: 'get',
+                    data: {'city': focusCityName},
+                    success: function (res) {
+                        if (res.msg == '0') {
+                            id = res.city_id
+                            $('#bottomCity').before('<div style="width: 60%" id="city_' + id + '"> ' +
+                            '<span style="display: none;" id="city_del">id</span>' +
+                                '<lable for="city" class="form-check-label" id="city" style="color: white;float: left;margin-top: 3px">' + focusCityName +'</lable> <span > <input class="btn btn-outline-primary btn-sm" style="float: left" type="button" id="delete-city"value="取消关注"> </span></div>')
+                            alert(res.signal)
+                        } else if (res.msg == '1') {
+                            document.getElementById('div-login-password').class = 'form-group has-danger';
+                            document.getElementsByName('password').class = 'form-control is-invalid';
+                            $('#signal').html(res.signal);
+                        } else if (res.msg == '-1') {
+                            document.getElementById('div-login-password').class = 'form-group has-danger';
+                            document.getElementsByName('password').class = 'form-control is-invalid';
+                            $('#signal').html(res.signal);
+                        }
+                    }
+                })
+            })
+        })
+        $(function () {
+            $('.btn-category').click(function () {
+
+                alert($(this).parent().prev().text())
+                {#alert($(this).prev().text())#}
+                var focusCityName = $(this).parent().prev().text()
+                var id
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/follow_category',
+                    method: 'get',
+                    data: {'category': focusCityName},
+                    success: function (res) {
+                        if (res.msg == '0') {
+                            id = res.category_id
+                            $('#bottomCategory').before('<div id="category_id"> ' +
+                            '<span style="display: none;" id="category_del">id</span>' +
+                                '<lable for="category" class="form-check-label" id="category" style="color: white;float: left;margin-top: 3px">' + focusCityName +'</lable> <span > <input class="btn btn-outline-primary btn-sm" style="float: left" type="button" id="delete-category"value="取消关注"> </span></div>')
+
+                            alert(res.signal)
+                        } else if (res.msg == '1') {
+                            document.getElementById('div-login-password').class = 'form-group has-danger';
+                            document.getElementsByName('password').class = 'form-control is-invalid';
+                            $('#signal').html(res.signal);
+                        } else if (res.msg == '-1') {
+                            document.getElementById('div-login-password').class = 'form-group has-danger';
+                            document.getElementsByName('password').class = 'form-control is-invalid';
+                            $('#signal').html(res.signal);
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+{#    user-information#}
+    <script>
+    $('#portrait').on('change', function () {
+        // 获取用户最后一次选择的图片
+        var choose_file = $(this)[0].files[0];
+        // 创建一个新的FileReader对象，用来读取文件信息
+        var reader = new FileReader();
+        // 读取用户上传的图片的路径
+        reader.readAsDataURL(choose_file);
+        // 读取完毕之后，将图片的src属性修改成用户上传的图片的本地路径
+        reader.onload = function () {
+            $("#avatar-img").attr("src", reader.result)
+        }
+    });
+    $('#update_password').on('click', function () {
+        var password = $('#password').val();
+        $.ajax({
+            processData: false,
+            contentType: false,
+            {#修改密码接口#}
+            url: 'http://127.0.0.1:8000/api/user_change_password?new_password=' + password,
+            type: 'get',
+            data: {'password': password},
+            success: function (arg) {
+                if (arg.msg == 0) {
+                    alert('成功！')
+                } else {
+                    alert('失败！')
+                }
+            }
+        })
+    });
+    $('#update_email').on('click', function () {
+        var email = $('#email').val();
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/user_change_email',
+            type: 'get',
+            data: {'email': email},
+            success: function (arg) {
+                alert(arg.msg)
+                if (arg.msg == 0) {
+                    alert('成功！')
+                } else {
+                    alert('失败！')
+                }
+            }
+        })
+    });
+    $('#update_phone').on('click', function () {
+
+        var phone = $('#tel').val();
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/user_change_phone',
+            type: 'get',
+            data: {'phone': phone},
+            success: function (arg) {
+                if (arg.msg == 0) {
+                    alert('成功！')
+                } else {
+                    alert('失败！')
+                }
+            }
+        })
+    });
+
+    $('#delete-city').on('click', function () {
+        {#alert("+++++++")#}
+        {#alert($('#city').text())#}
+        var focusCityName = $('#city').text();
+        var id = $('#city_del').text()
+        {#alert(id)#}
+        console.log('focusCityName' + focusCityName)
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/delete_follow?city=' + focusCityName,
+            method: 'get',
+            data: {
+                'city': focusCityName,
+                "id": id
+            },
+            success: function (res) {
+                if (res.msg == '0') {
+                    alert(res.signal)
+                    $("#city_" + id).remove();
+                } else if (res.msg == '1') {
+                    document.getElementById('div-login-password').class = 'form-group has-danger';
+                    document.getElementsByName('password').class = 'form-control is-invalid';
+                    $('#signal').html(res.signal);
+                } else if (res.msg == '-1') {
+                    document.getElementById('div-login-password').class = 'form-group has-danger';
+                    document.getElementsByName('password').class = 'form-control is-invalid';
+                    $('#signal').html(res.signal);
+                }
+            }
+        })
+    });
+
+    $('#delete-category').on('click', function () {
+        {#alert($(this).prev().text())#}
+        var focusCategoryName = $('#category').text();
+        var id = $('#category_del').text()
+        console.log(focusCategoryName)
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/delete_follow?category=' + focusCategoryName,
+            method: 'get',
+            data: {
+                'category': focusCategoryName,
+                "id": id
+            },
+            success: function (res) {
+                if (res.msg == '0') {
+                    alert(res.signal)
+                    $("#category_" + id).remove();
+                } else if (res.msg == '1') {
+                    document.getElementById('div-login-password').class = 'form-group has-danger';
+                    document.getElementsByName('password').class = 'form-control is-invalid';
+                    $('#signal').html(res.signal);
+                } else if (res.msg == '-1') {
+                    document.getElementById('div-login-password').class = 'form-group has-danger';
+                    document.getElementsByName('password').class = 'form-control is-invalid';
+                    $('#signal').html(res.signal);
+                }
+            }
+        })
+    })
+
+</script>
+{% endblock %}

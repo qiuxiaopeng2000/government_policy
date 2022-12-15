@@ -1,3 +1,4 @@
+import sys
 import time
 import pandas as pd
 import requests
@@ -5,6 +6,7 @@ from lxml import etree
 import random
 import django
 import os
+sys.path.append(os.path.abspath(os.path.join(__file__, "..", "..", "..", "..")))
 from libs.mysql_util import select_data
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "government.settings")
@@ -19,7 +21,7 @@ category_list = ['金融保险', '财政税务', '发展改革', '文化旅游',
 
 select_sql = "select create_time from policy_url where city='宣城市' order by create_time desc limit 1"
 last_create_time = select_data(select_sql)
-print(last_create_time)
+print("上次最新政策时间：", last_create_time[0][0])
 
 print("开始爬虫！")
 for index in range(1, 12):
@@ -48,6 +50,8 @@ for index in range(1, 12):
         times = link.xpath('./div[2]/div[2]/span[2]/font/text()')[0]
         timeArray = time.strptime(times, "%Y-%m-%d")
         times = time.strftime("%Y-%m-%d", timeArray)
+        if times > last_create_time[0][0]:
+            print("爬取的政策发布时间为：", times)
         if times <= last_create_time[0][0]:
             print("提前结束")
             flag = 1

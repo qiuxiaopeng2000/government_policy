@@ -15,6 +15,7 @@ from .forms import follow_form, user_info_form, user_login_form, user_change_ema
 # from rest_framework.authtoken.models import Token
 from .utils.MsmService import sendMsm
 import datetime
+# from get_data.anhui.xuancheng.xuancheng_policy import data
 
 
 # @require_http_methods(["GET"])
@@ -39,7 +40,10 @@ def show_policy(request):
         city = request.GET.get('city')
         category = request.GET.get('category')
         #print("12321213" + category)
-        policys = Data.objects.filter(Q(city=city) | Q(category=category)).order_by('-create_time')
+        if city is not None and category is not None:
+            policys = Data.objects.filter(Q(city=city) & Q(category=category)).order_by('-create_time')
+        else:
+            policys = Data.objects.filter(Q(city=city) | Q(category=category)).order_by('-create_time')
         #print(len(policys))
         #response['list'] = json.loads(serializers.serialize("json", policys))
         List = []
@@ -113,10 +117,19 @@ def show_policy_detail(request):
 def update_policy(request):
     response = {}
     try:
+        # print("+++++++++")
+
         city = request.GET.get('city')
+        print('city: ' + city)
         func = 'spider_' + str(city)
         cmd = "{}()".format(func)
         exec(cmd)
+        # print(str(data))
+        # print("dsafksafa")
+        # QuerySet = {'title': '安徽省人民政府关于印发安徽省政府投资管理办法的通知', 'city': '安徽省',
+        #             'url': 'https://www.ah.gov.cn/public/1681/554182711.html', 'category': '疫情'}
+        # Data.objects.create(**QuerySet)
+        # print("kjsanfksahsa")
         # if city == 'anhui':
         #     spider_anhui()
         response['msg'] = '0'
@@ -124,6 +137,7 @@ def update_policy(request):
         response['error_num'] = 0
         response['cmd'] = cmd
     except Exception as e:
+        # print("----------")
         response['msg'] = str(e)
         response['error_num'] = 1
     return JsonResponse(response)
@@ -155,7 +169,7 @@ def user_register(request):
             if user_info_data.objects.filter(user_id=user.id).exists():
                 get_user_info = user_info_data.objects.get(user_id=user.id)
             else:
-                get_user_info = user_info_data.objects.create(user=user, last_time=datetime.datetime.now())
+                get_user_info = user_info_data.objects.create(user=user, last_time="2022-10-17")
                 # get_user_info.last_time = datetime.datetime.now()
             # new_user_info_data = user_info_data.objects.create(user=user)
             print('+++++')
@@ -283,7 +297,7 @@ def user_change_email(request):
     response = {}
     try:
         # username = request.GET.get('username')
-        username = request.user.username
+        username = request.session.get('info').get('username')
         email = request.GET.get('email')
         # print('??????')
         if not User.objects.filter(username=username).exists():
@@ -291,17 +305,13 @@ def user_change_email(request):
             response['signal'] = '用户不存在'
         else:
             user = User.objects.get(username=username)
-            if request.user == user:
-                user.email = email
-                user.save()
-                response['msg'] = '0'
-                response['error_num'] = 0
-                response['signal'] = '修改成功！'
+            user.email = email
+            user.save()
+            response['msg'] = '0'
+            response['error_num'] = 0
+            response['signal'] = '修改成功！'
 
-            else:
-                response['msg'] = '1'
-                response['error_num'] = 1
-                response['signal'] = '你无权修改该用户邮箱！'
+
     except Exception as e:
         response['msg'] = '-1'
         response['error_num'] = 1
@@ -314,7 +324,7 @@ def user_change_phone(request):
     response = {}
     try:
         # username = request.GET.get('username')
-        username = request.user.username
+        username = request.session.get('info').get('username')
         # print('?????', username)
         phone = request.GET.get('phone')
         if not User.objects.filter(username=username).exists():
@@ -322,19 +332,15 @@ def user_change_phone(request):
             response['signal'] = '用户不存在'
         else:
             user = User.objects.get(username=username)
-            if request.user == user:
+            # print('!!!!')
+            user_data = user_info_data.objects.get(user=user)
                 # print('!!!!')
-                user_data = user_info_data.objects.get(user=user)
-                # print('!!!!')
-                user_data.phone = phone
-                user_data.save()
-                response['msg'] = '0'
-                response['error_num'] = 0
-                response['signal'] = '修改成功！'
-            else:
-                response['msg'] = '1'
-                response['error_num'] = 1
-                response['signal'] = '你无权修改该用户信息！'
+            user_data.phone = phone
+            user_data.save()
+            response['msg'] = '0'
+            response['error_num'] = 0
+            response['signal'] = '修改成功！'
+
     except Exception as e:
         response['msg'] = '-1'
         response['error_num'] = 1
@@ -348,7 +354,7 @@ def user_change_portrait(request):
     try:
         # username = request.GET.get('username')
         # username = request.user.username
-        username = 'qxp1'
+        username = request.session.get('info').get('username')
         portrait = request.FILES.get('portrait')
         print(portrait)
         if not User.objects.filter(username=username).exists():
@@ -356,19 +362,15 @@ def user_change_portrait(request):
             response['signal'] = '用户不存在'
         else:
             user = User.objects.get(username=username)
-            if request.user == user:
-                user_info = request.FILES.get('portrait')
-                user_data = user_info_data.objects.get(user=user)
-                user_data.portrait = user_info
-                # user_data.save()
-                response['msg'] = '0'
-                response['error_num'] = 0
-                response['signal'] = '%s修改成功！' % user_info
+            user_info = request.FILES.get('portrait')
+            user_data = user_info_data.objects.get(user=user)
+            user_data.portrait = user_info
+            # user_data.save()
+            response['msg'] = '0'
+            response['error_num'] = 0
+            response['signal'] = '%s修改成功！' % user_info
 
-            else:
-                response['msg'] = '1'
-                response['error_num'] = 1
-                response['signal'] = '你无权修改该用户信息！'
+
     except Exception as e:
         response['msg'] = '-1'
         response['error_num'] = 1
@@ -436,6 +438,7 @@ def follow_city(request):
         print("12345")
         response['msg'] = '0'
         response['signal'] = '关注成功！'
+        response['city_id'] = '%d' % follow_other.id
     except Exception as e:
         response['msg'] = '-1'
         response['error_num'] = 1
@@ -462,6 +465,7 @@ def follow_category(request):
         print("12345")
         response['msg'] = '0'
         response['signal'] = '关注成功！'
+        response['category_id'] = '%d' % follow_other.id
     except Exception as e:
         response['msg'] = '-1'
         response['error_num'] = 1
@@ -561,8 +565,22 @@ def test(request):
 
 
 def newData(request):
-    QuerySet = {'title':'安徽省人民政府关于印发安徽省政府投资管理办法的通知','city':'安徽省','url':'https://www.ah.gov.cn/public/1681/554182711.html','category':'疫情'}
+    # QuerySet = {'title':'宣城市人民政府办公室关于印发宣城市人民防空工程使用管理办法的通知','city':'宣城市','url':'http://www.xuancheng.gov.cn/Xzgfxwjk/show/2545407.html','category':'文化旅游', 'create_time': '2022-11-08'}
+    # Data.objects.create(**QuerySet)
+    QuerySet = {'title': '宣城市人民政府关于印发宣城市城市容貌标准的通知', 'city': '宣城市',
+                'url': 'http://www.xuancheng.gov.cn/Xzgfxwjk/show/2529725.html', 'category': '科技工信',
+                'create_time': '2022-10-18'}
+    print("+++++++++++")
     Data.objects.create(**QuerySet)
+    print("1sygdiuwjcis")
+
+    return JsonResponse({"status": "true"})
+
+
+def newDataTest(title, url, create_time, city, category, head,body):
+    Data.objects.create(title=title, url=url, create_time=create_time, city=city, category=category, head=head,
+                        body=body)
+    print("+++++++")
     return JsonResponse({"status": "true"})
 
 

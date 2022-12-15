@@ -34,9 +34,9 @@
                 category: '',
                 city: '',
                 unReadNum: 0,
-           //     unReadPolicyArray: [],
-             //   FocusPolicyData: [],
-                FocusReadPolicyData:[],
+                //     unReadPolicyArray: [],
+                //   FocusPolicyData: [],
+                FocusReadPolicyData: [],
                 pageNum: 1,  // 共几页=所有数据/每页现实数量
                 pageSize: 10, // 每页显示数量
                 totalPage: [], // 所有分页的数据
@@ -60,12 +60,15 @@
                 getUnUpdatePolicy: function (event) {
                     axios.get("http://127.0.0.1:8000/api/getUnUpdateInfo").then(function (response) {
                         alert(response.data.status)
+
                         vm.dataShow = response.data.dataArray
                         console.log(vm.PolicyData)
                         $("#count").text(0)
+                        $("#divided").before('<div style="border:1px solid #CCC;display: none" id="hengxian">以上是最新的政策</div>')
                         //vm.unReadPolicyArray = response.data.dataArray
                         vm.FocusReadPolicyData = response.data.dataHaveRead
                         $("#hengxian").show()
+
                     }, function (err) {
                     })
                 },
@@ -91,17 +94,17 @@
                 // 下一页
                 nextPage() {
                     if (this.currentPage === this.pageNum - 1) return;
-                    vm.dataShow = this.totalPage[++this.currentPage];
+                    this.dataShow = this.totalPage[++this.currentPage];
                 },
                 // 上一页
                 prePage() {
                     if (this.currentPage === 0) return;
-                    vm.dataShow = this.totalPage[--this.currentPage];
+                    this.dataShow = this.totalPage[--this.currentPage];
                 },
                 // 点击页码
                 page(i) {
-                    vm.currentPage = i
-                    vm.dataShow = this.totalPage[i - 1];
+                    this.currentPage = i - 1
+                    this.dataShow = this.totalPage[this.currentPage];
                 },
 
                 getPolicy: function (event) {
@@ -109,7 +112,37 @@
                         url: "http://127.0.0.1:8000/api/show_policy",
                         method: 'get',
                         data: {
-                            'category': event.target.innerHTML
+                            'category': event.target.innerHTML,
+                            'city': $('#cityInput').val()
+                        },
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.msg == 'success') {
+                                // $('.table_clear').empty()
+                                vm.PolicyData = res.list
+                                vm.pageNum = Math.ceil(vm.PolicyData.length / vm.pageSize) || 1;//计算有多少页数据，默认为1
+                                {#alert(this.pageNum)#}
+                                // 循环页面
+                                for (let i = 0; i < vm.pageNum; i++) {
+                                    // 每一页都是一个数组 形如 [['第一页的数据'],['第二页的数据'],['第三页数据']]
+                                    vm.totalPage[i] = vm.PolicyData.slice(vm.pageSize * i, vm.pageSize * (i + 1))
+                                }
+
+                                // 获取到数据后默认显示第一页内容
+                                vm.dataShow = vm.totalPage[vm.currentPage];
+                            }
+
+                        }
+
+                    })
+                },
+                getCityPolicy: function (event) {
+                    alert($('#cityInput').val())
+                    $.ajax({
+                        url: "http://127.0.0.1:8000/api/show_policy",
+                        method: 'get',
+                        data: {
+                            'city': $('#cityInput').val()
                         },
                         dataType: 'json',
                         success: function (res) {

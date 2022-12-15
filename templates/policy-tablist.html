@@ -1,6 +1,18 @@
 {% load static %}
+{#{% block content %}#}
 <div class="col-8">
+    <ul id="search-box" class="navbar-nav ms-md-auto">
+        <div style="margin-right: 20px;display: flex">
+                <span>
+                    <input class="form-control me-sm-2 input-search" type="search" placeholder="请输入城市名..." id="cityInput"
+                       style="width:320px">
+                </span>
+                <span>
+                    <button class="btn btn-outline-primary" style="width:80px;" @click="getCityPolicy($event)">检索</button>
+                </span>
 
+        </div>
+    </ul>
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" role="presentation">
             <a class="nav-link" data-bs-toggle="tab" id="kejigongxin" href="#content-kejigongxin"
@@ -16,30 +28,34 @@
         {% endfor %}
     </ul>
 
-    <div id="TabContent1" class="tab-content" style="background:rgba(0,0,0,0.4)">
+    <div id="TabContent" class="tab-content div-background">
         <div class="tab-pane fade active show div-tab-content" id="content-kejigongxin" role="tabpanel">
             <table class="table table-hover" id="table-kejigongxin" data-pagination="true"
                    data-side-pagination="client">
                 <tbody>
-
-                <tr class="table-hover" v-for="item,index in dataShow" :key="item.id">
+                <tr class="table-hover" v-for="item,index in dataShow" v-bind:key="item.id">
                     {% verbatim %}
-                    <th scope="row"><a :href="'/api/policy?pk=' + item.id" style="color:white;text-decoration:none">{{
-                        item.title }}</a></th>
-                    <td style="font-size:10px">{{ item.city }}</td>
-                    <td style="font-size:10px">{{ item.category }}</td>
-                    <td style="font-size:10px">{{ item.create_time }}</td>
-                    {% endverbatim %}
-                </tr>
-                <div style="border:1px solid #CCC;display: none" id="hengxian">以下是已经阅读的关注政策</div>
-                <tr class="table-hover" v-for="item,index in FocusReadPolicyData" v-bind:key="item.id">
-                    {% verbatim %}
-                    <th scope="row"><a :href="'/api/policy?pk=' + item.id" style="color:white;text-decoration:none">{{
-                        item.title }}</ a>
+                    <th scope="row" class="th-policy"><a :href="'/api/policy?pk=' + item.id"
+                                                         style="color:white; text-decoration:none;">{{ item.title }}</a>
                     </th>
-                    <td style="font-size:10px">{{ item.city }}</td>
-                    <td style="font-size:10px">{{ item.category }}</td>
-                    <td style="font-size:10px">{{ item.create_time }}
+                    <td class="td-policy">{{ item.city }}</td>
+                    <td class="td-policy">{{ item.category }}</td>
+                    <td class="td-policy">{{ item.create_time }}
+                    <td>
+                        {% endverbatim %}
+                </tr>
+
+
+{#                <div style="border:1px solid #CCC;display: none" id="hengxian">以上是最新的政策</div>#}
+                <tr id="divided" class="table-hover " v-for="item,index in FocusReadPolicyData" v-bind:key="item.id">
+                    {% verbatim %}
+                    <th scope="row" class="th-policy"><a :href="'/api/policy?pk=' + item.id"
+                                                         style="color:white;text-decoration:none">{{ item.title }}</a>
+                    </th>
+                    <td class="td-policy">{{ item.city }}</td>
+                    <td class="td-policy">{{ item.category }}</td>
+
+                    <td class="td-policy">{{ item.create_time }}
                     <td>
                         {% endverbatim %}
                 </tr>
@@ -60,28 +76,89 @@
                         </a>
 
                     </li>
-
-                    {#                    <li class="page-item active">#}
-                    {#                        <a class="page-link" href="#">1</a>#}
-                    {#                    </li>#}
-                    {#                    <li class="page-item">#}
-                    {#                        <a class="page-link" href="#">2</a>#}
-                    {#                    </li>#}
-                    {#                    <li class="page-item">#}
-                    {#                        <a class="page-link" href="#">3</a>#}
-                    {#                    </li>#}
-                    {#                    <li class="page-item">#}
-                    {#                        <a class="page-link" href="#">4</a>#}
-                    {#                    </li>#}
-                    {#                    <li class="page-item">#}
-                    {#                        <a class="page-link" href="#">5</a>#}
-                    {#                    </li>#}
                     <li class="page-item">
                         <a class="page-link" href="#" @click="nextPage">&raquo;</a>
                     </li>
                 </ul>
             </div>
+
         </div>
     </div>
 </div>
+{#{% endblock %}#}
+{#{% block js %}#}
+{#<script src="{% static 'vue.js' %}"></script>#}
+{#<script src="https://unpkg.com/axios/dist/axios.min.js"></script>#}
+{#<script type="text/javascript">#}
+{##}
+{#	function load_policy(){#}
+{#		alert(“请求数据中。。。”)#}
+{#		$.ajax({#}
+{#			url: 'http://127.0.0.1:8000/api/show_policy',#}
+{#			method: 'get',#}
+{#			data: 'category' : '科技工信',#}
+{#			success: function(res){#}
+{#				alert(res.msg)#}
+{#				alert("接收到"+str(reg.listLength)+"条政策")#}
+{##}
+{#			},#}
+{#		})#}
+{##}
+{#	}#}
+{##}
+{##}
+{#</script>#}
 
+
+{#<script>#}
+{#var vm = new Vue({#}
+{#    el:"#app",#}
+{#    data:{#}
+{#      PolicyData:[],#}
+{#      categoryList:[],#}
+{#      category:'',#}
+{#      city:'',#}
+{#      FocusPolicyData:[],#}
+{#      unReadNum:0,#}
+{#    },#}
+{#    created(){#}
+{#        //this.getInitPolicy()#}
+{#        this.getInitPolicy()#}
+{#        this.getUnreadNumOfmessage()#}
+{#    },#}
+{#    methods: {#}
+{#        getInitPolicy:function(){#}
+{#            alert("hello")#}
+{#            axios.get("http://127.0.0.1:8000/api/show_policy").then(function (response){#}
+{#                      vm.PolicyData=response.data.list;   /*这里不能使用this.policyData，因为对象已经发生改变*/#}
+{#            },function (err){ })#}
+{#        },#}
+{#        getUnreadNumOfmessage:function (){#}
+{#            axios.get("http://127.0.0.1:8000/api/get_Num_Of_Unupdate").then(function (response){#}
+{#                      alert(response.data.numOfMessage)#}
+{#                      vm.unReadNum = response.data.numOfMessage#}
+{#            },function (err){})#}
+{#        },#}
+{#        getPolicy: function (event) {#}
+{#            $.ajax({#}
+{#                url: "http://127.0.0.1:8000/api/show_policy",#}
+{#                method: 'get',#}
+{#                data: {#}
+{#                    'category': event.target.innerHTML#}
+{#                },#}
+{#                dataType: 'json',#}
+{#                success: function (res) {#}
+{#                    if (res.msg == 'success') {#}
+{#                       // $('.table_clear').empty()#}
+{#                        vm.PolicyData = res.list#}
+{#                    }#}
+{##}
+{#                }#}
+{##}
+{#            })#}
+{#        },#}
+{#    },#}
+
+
+{#</script>#}
+{#{% endblock %}#}

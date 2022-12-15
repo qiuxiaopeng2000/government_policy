@@ -2,16 +2,6 @@
     z-index: 1;
 }
 
-.div-form-2 {
-    padding-left: 15%;
-    padding-right: 15%;
-}
-
-.div-form-3 {
-    padding-left: 15%;
-    padding-right: 15%;
-}
-
 .div-form-group {
     margin-top: 3%;
 }
@@ -30,19 +20,26 @@
     margin-top: 3%;
 }
 
+.div-policy{
+    margin-top: 5%;
+    margin-left: 3%;
+    margin-right: 3%;
+    margin-bottom: 5%;
+    color: white;
+}
+
 .btn-city {
     margin-top: 5%;
     margin-right: 3%;
 }
 
 .label-source {
-    color: #777;
-    font-weight: lighter;
-    font-size: 10pt;
+    color: white;
+    font-size: 14px;
 }
 
 .label-date {
-    color: #777;
+    color: white;
     font-weight: lighter;
     font-size: 10pt;
 }
@@ -94,19 +91,19 @@ img.figure {
 }
 
 .div-background {
-    border-radius: 2%;
-    box-shadow: 0px 0px 20px 5px rgba(41,154,207, 0.2);
-    background: rgba(0, 0, 0, 0.6);
+    border-radius: 16px/16px;
+    box-shadow: 0px 0px 20px 5px rgba(41,154,207, 0.8);
+    background: rgba(50, 50, 50, 0.6);
 }
 
 .div-sidebar {
-    margin-top: 10%;
+    margin-top: 20%;
     max-width: 85%;
 }
 
 .div-binary {
     height: 460px;
-    border-radius: 2%;
+    border-radius: 16px/16px;
     display: flex;
     overflow: hidden;
     box-shadow: 0px 0px 20px 5px rgba(41,154,207, 0.2);
@@ -116,7 +113,6 @@ img.figure {
 .form-left {
     width: 40%;
     hight: 100%;
-
 }
 
 .form-right {
@@ -126,4 +122,52 @@ img.figure {
     background: rgba(0, 0, 0, 0.3);
     align-items: center;
     justify-content: center;
+}
+
+.th-policy{
+    width: 70%;
+    height: 60px;
+    line-height: 60px;
+    font-size: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+    border-bottom-color: rgb(41,154,207);
+    border-bottom-style: inset;
+}
+
+.td-policy{
+    width: 10%;
+    height: 60px;
+    line-height: 60px;
+    font-size: 14px;
+    border-bottom-color: rgb(41,154,207);
+    border-bottom-style: inset;
+}
+
+.has-border{
+    border: 1px solid rgb(41,154,207);
+}
+
+.nav-item.show{
+    background-color: #0f5132;
+}
+
+.none-display{
+    display: none;
+}
+
+.lighten{
+    text-shadow: 0px 0px 5px rgba(41,154,207, 0.3);
+}
+
+.input-search{
+    width:320px;
+    background-color: #000610;
+    color:white;
+    border: 1px solid rgb(41,154,207);
+}
+
+.input-search:focus-within{
+    background-color: #010610;
+    color: white;
 }

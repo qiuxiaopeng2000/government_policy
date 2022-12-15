@@ -3,6 +3,9 @@
 import time
 import django
 import os
+
+from libs.mysql_util import select_data
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "government.settings")
 django.setup()
 import pandas as pd
@@ -17,6 +20,10 @@ header = {
 }
 category_list = ['金融保险', '财政税务', '发展改革', '文化旅游', '农林水利', '市场监管', '科技工信', '住房城建', '医疗卫生', '其它']
 
+select_sql = "select create_time from policy_url where city='宣城市' order by create_time desc limit 1"
+last_create_time = select_data(select_sql)
+print(last_create_time)
+
 print("开始爬虫！")
 for index in range(1, 4):
     print("爬取第%s页" % index)
@@ -29,6 +36,7 @@ for index in range(1, 4):
     # soup_a = soup_a[397:428]
 
     i = 0
+    flag = 0
     # df = pd.DataFrame(columns=['policy_url', 'policy_title', 'city', 'category', 'create_time'])
     for link in soup_a:
         # children_div = link.find_all('div')

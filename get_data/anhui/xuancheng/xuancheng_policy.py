@@ -1,6 +1,6 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(__file__, "..", "..")))
+sys.path.append(os.path.abspath(os.path.join(__file__, "..", "..", "..", "..")))
 import requests
 import pandas as pd
 import time
@@ -8,10 +8,13 @@ from libs.mysql_util import insert_or_update, select_data
 from lxml import etree
 import django
 import os
+# from api.views import newDataTest
+
+
+# print(" ++++++-------")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "government.settings")
 django.setup()
 from api.models import Data
-
 select_sql = "select create_time from data where city='宣城市' order by create_time desc limit 1"
 last_create_time = select_data(select_sql)
 last_create_time = last_create_time[0][0]
@@ -30,8 +33,9 @@ header = {
 }
 print("开始爬取每个政策文件的具体内容")
 
-
+datas = []
 for i in gov_file.index:
+    lists = []
     print("爬取第%s个政策" % i)
     url = gov_file.loc[i, 'policy_url']
     title = gov_file.loc[i, 'policy_title']
@@ -49,8 +53,17 @@ for i in gov_file.index:
     head = '\n'.join(head)
     body = soup.xpath('/html/body/div[1]/div[3]/div[3]//text()')
     body = '\n'.join(body)
+    # lists.append(title)
+    # lists.append(url)
+    # lists.append(create_time)
+    # lists.append(city)
+    # lists.append(category)
+    # lists.append(head)
+    # lists.append(body)
+    # datas.append(lists)
+    # newDataTest(title, url, create_time, city, category, head,body)
     data = Data.objects.create(title=title, url=url, create_time=create_time, city=city, category=category, head=head,
-                               body=body)
+                              body=body)
     # sql = "insert into data(title, url, create_time, city, category, head, body) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (title, url, create_time, city, category, head, body)
     # insert_or_update(sql)
     # time.sleep(2)

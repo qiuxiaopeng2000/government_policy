@@ -113,7 +113,8 @@ def policy(request):
 
 
 def user(request):
-    return render(request, 'templatesTest/user.html')
+    username = request.session.get('info').get('username')
+    return render(request, 'templatesTest/user.html',{'user_name': username})
 
 
 def category(request):
@@ -121,3 +122,6 @@ def category(request):
     context = {'category_list': category_list}
     # print(len(category_list))
     return render(request, 'policy-tablist.html', context)
+
+def spider(request):
+    return render(request, 'spideHtml.html')

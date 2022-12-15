@@ -1,13 +1,10 @@
-<div class="col-8">
-	<div class="div-policy-title">
-		<h2>{{ policy.title }}</h2>
-		<lable class="label-source">来自--{{ policy.city }}<br>{{ policy.create_time }}</lable>
-		<hr>
+<div class="col-8 div-background">
+	<div class="div-policy">
+		<h4>{{ policy.title }}</h4>
+        <lable class="label-source">原文链接----<a href="{{ policy.url }}" style="color: white" target="_blank"> {{ policy.url }} </a><br>{{ policy.create_time }}</lable>
+		<hr style="background: rgb(41,154,255); height:2px; border: none;">
 	</div>
-{#	<div class="div-policy-content">#}
-{#		<p>解封啦啦啦啦啦啦啦啦啦</p>#}
-{#	</div>#}
-    <div>
+    <div class="div-policy">
         {{ policy.body }}
     </div>
 </div>

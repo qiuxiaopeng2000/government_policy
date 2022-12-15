@@ -13,4 +13,5 @@ urlpatterns = [
     path('all-policy-data/', views.all_policy_data, name='all_policy_data'),
     path('user-data-info/', views.user_data_info, name='user_data_info'),
     path('policy-detail/', views.get_policy_detail, name='get_policy_detail'),
+    path('spider/', views.spider, name="spider"),
 ]

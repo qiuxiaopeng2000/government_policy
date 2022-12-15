@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'api',
+    # 'api',
+    'api.apps.ApiConfig',
     'rest_framework',
     "phonenumber_field",
     'intersection',
@@ -150,8 +151,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.qq.com'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = '903497072@qq.com'
-EMAIL_HOST_PASSWORD = 'gtxghmwtqbwzbffe'
+EMAIL_HOST_USER = '3230822899@qq.com'
+EMAIL_HOST_PASSWORD = 'uwsbcrmguwehcjbh'
 EMAIL_USE_TLS = False
 
 # 短信的配置信息
